@@ -98,18 +98,46 @@ Features identificadas mas explicitamente diferidas para evitar scope creep no v
 
 ## Traceability
 
-> Preenchido pelo roadmapper.
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| FOUND-01 | Phase 1 — Foundation | Pending |
+| FOUND-02 | Phase 1 — Foundation | Pending |
+| FOUND-03 | Phase 1 — Foundation | Pending |
+| FOUND-04 | Phase 1 — Foundation | Pending |
+| FOUND-05 | Phase 1 — Foundation | Pending |
+| FOUND-06 | Phase 1 — Foundation | Pending |
+| FOUND-07 | Phase 1 — Foundation | Pending |
+| FOUND-08 | Phase 1 — Foundation | Pending |
+| CHAT-01 | Phase 2 — LLM Chat | Pending |
+| CHAT-02 | Phase 2 — LLM Chat | Pending |
+| CHAT-03 | Phase 2 — LLM Chat | Pending |
+| CHAT-04 | Phase 2 — LLM Chat | Pending |
+| CHAT-05 | Phase 2 — LLM Chat | Pending |
+| KB-01 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-02 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-03 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-04 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-05 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-06 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-07 | Phase 3 — Knowledge Base + RAG | Pending |
+| BENCH-01 | Phase 4 — LLM Benchmarking | Pending |
+| BENCH-02 | Phase 4 — LLM Benchmarking | Pending |
+| GMAIL-01 | Phase 5 — Gmail + Calendar | Pending |
+| GMAIL-02 | Phase 5 — Gmail + Calendar | Pending |
+| GMAIL-03 | Phase 5 — Gmail + Calendar | Pending |
+| CAL-01 | Phase 5 — Gmail + Calendar | Pending |
+| CAL-02 | Phase 5 — Gmail + Calendar | Pending |
+| MCP-01 | Phase 6 — MCP Management | Pending |
+| MCP-02 | Phase 6 — MCP Management | Pending |
+| MCP-03 | Phase 6 — MCP Management | Pending |
+| MCP-04 | Phase 6 — MCP Management | Pending |
+| AGENT-01 | Phase 7 — Agents + Automations | Pending |
+| AGENT-02 | Phase 7 — Agents + Automations | Pending |
+| AGENT-03 | Phase 7 — Agents + Automations | Pending |
+| AGENT-04 | Phase 7 — Agents + Automations | Pending |
 
-| REQ-ID | Phase |
-|--------|-------|
-| FOUND-01 a FOUND-08 | Phase 1 |
-| CHAT-01 a CHAT-05 | Phase 2 |
-| KB-01 a KB-07 | Phase 3 |
-| BENCH-01 a BENCH-02 | Phase 4 |
-| GMAIL-01 a GMAIL-03 | Phase 5 |
-| CAL-01 a CAL-02 | Phase 5 |
-| MCP-01 a MCP-04 | Phase 6 |
-| AGENT-01 a AGENT-04 | Phase 7 |
+**Coverage: 35/35 v1 requirements mapped.**
+Phase 8 (Dashboard + Polish) has no formal requirement ID — see ROADMAP.md Coverage Notes.
 
 ---
 
@@ -129,4 +157,4 @@ Features identificadas mas explicitamente diferidas para evitar scope creep no v
 
 ---
 
-*Generated: 2026-06-25*
+*Generated: 2026-06-25 | Traceability updated: 2026-06-25*
