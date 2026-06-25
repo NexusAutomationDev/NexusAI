@@ -1,0 +1,21 @@
+{
+  "name": "nexusai",
+  "version": "0.1.0",
+  "description": "NexusAI — Tauri v2 desktop AI super-app",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "@tauri-apps/api": "^2.11.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@vitejs/plugin-react": "^6.0.3",
+    "jsdom": "^29.1.1",
+    "vitest": "4.1.9"
+  }
+}
