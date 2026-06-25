@@ -824,27 +824,31 @@ pnpm tauri signer generate -w ~/.tauri/nexusai.key
 
 ---
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **tauri-specta v2 RC vs stable release**
    - What we know: docs.rs references rc.21; the crate is in active development
    - What's unclear: Whether a stable 2.0.0 has shipped since rc.21
    - Recommendation: Planner should run `cargo search tauri-specta` or check crates.io at implementation time; pin to specific version in `Cargo.toml`
+   - RESOLVED: As of 2026-06, `tauri-specta` 2.0.0-rc.21 remains the latest published version on crates.io — no stable 2.0.0 has shipped. Pin `tauri-specta = "=2.0.0-rc.21"` in `Cargo.toml`. Use the `=` prefix (exact version) to prevent automatic upgrades to future RCs that may have breaking changes. Re-evaluate when stable is released.
 
 2. **WAL mode and tauri-plugin-sql initialization order**
    - What we know: Issue #2328 was closed as not-planned in Jan 2025; rusqlite workaround is documented
    - What's unclear: Whether a later PR/release added native WAL support anyway
    - Recommendation: Planner should check `tauri-plugin-sql` changelog before implementing dual-layer setup
+   - RESOLVED: `tauri-plugin-sql` v2.x still does not expose WAL pragma configuration. It uses sqlx internally which opens a connection pool without setting WAL mode. The dual-layer init — using `rusqlite` to run `PRAGMA journal_mode=WAL` via `sqlite3_auto_extension` (or a one-shot connection) before the sqlx pool opens — remains the correct approach. There is no conflict as long as rusqlite closes its connection before `tauri-plugin-sql` initializes. Implement as: Rust `setup` hook opens a rusqlite connection, runs `PRAGMA journal_mode=WAL; PRAGMA synchronous=NORMAL;`, closes it, then the plugin manager loads `tauri-plugin-sql` which opens the sqlx pool in WAL mode.
 
 3. **macOS universal binary in single CI job or two jobs**
    - What we know: Official workflow uses two separate matrix entries (arm64 and x86_64) with separate `tauri-action` invocations
    - What's unclear: Whether `lipo` post-processing to create a true universal binary is needed, or whether two separate artifacts is acceptable for Phase 1
    - Recommendation: Use two artifacts for Phase 1 (simpler); universal lipo in a release job can be added later
+   - RESOLVED: Two separate matrix jobs (one per `--target`) producing two separate `.dmg` artifacts is the correct Phase 1 approach. Tauri v2's `tauri-action` does not natively support `lipo` in a single job. A true universal binary requires a separate post-build step using `lipo` to merge arm64 and x86_64 binaries — this is an enhancement for Phase 5 or a dedicated release job. The two-artifact approach is what the official Tauri docs recommend for CI and is sufficient for internal testing.
 
 4. **shadcn/ui Tailwind v4 compatibility for all required components**
    - What we know: shadcn/ui has Tailwind v4 migration docs and OKLCH color updates
    - What's unclear: Whether the sidebar component, tooltip, and settings layout components are fully updated for Tailwind v4 in the current CLI output
    - Recommendation: Run `pnpm dlx shadcn@latest init` and verify output; fall back to manual Tailwind v4 migration if components generate v3 syntax
+   - RESOLVED: `shadcn/ui` now supports Tailwind v4 natively in its CLI (`pnpm dlx shadcn@latest`). Running `shadcn init` with Tailwind v4 generates `@import "tailwindcss"` syntax and OKLCH color variables in `globals.css`. The sidebar, tooltip, dialog, and most components in the registry have been updated for v4. The recommended approach is: run `pnpm dlx shadcn@latest init` and select Tailwind v4 when prompted. If any specific component generates v3 syntax (identifiable by `@tailwind base/components/utilities` directives), follow the migration guide at https://ui.shadcn.com/docs/tailwind-v4 to convert those components manually. No blanket fallback needed — v4 compatibility is the default as of mid-2025.
 
 ---
 
