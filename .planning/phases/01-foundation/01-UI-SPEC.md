@@ -50,9 +50,10 @@ Declared values (multiples of 4 only):
 | 3xl | 64px | Page-level vertical spacing |
 
 Exceptions:
-- **Sidebar icon touch target:** 40px height (sidebar icons must be easily clickable;
-  40px is the accessible minimum for desktop pointer interaction — aligns to 8-point grid
-  as 5 × 8px)
+- **Sidebar icon touch target:** 40px height — this is a component-sizing value (not a
+  spacing token). Sidebar icons must be easily clickable; 40px is the accessible minimum
+  for desktop pointer interaction and aligns to the 8-point grid as 5 × 8px. Do not use
+  this value as a margin or padding spacing token.
 - **Sidebar width (icon-only):** 48px fixed — icon (20px) centered in 48px column with
   4px horizontal padding each side
 
@@ -63,9 +64,16 @@ Exceptions:
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
 | Body | 14px | 400 | 1.5 | Settings field labels, descriptions, tooltip text |
-| Label | 12px | 500 | 1.4 | Badge text, section sub-headers, status indicators |
+| Label | 12px | 400 | 1.4 | Badge text, section sub-headers, status indicators |
 | Heading | 16px | 600 | 1.3 | Settings section titles (API Keys, Models, Appearance) |
 | Display | 20px | 600 | 1.2 | Settings page title ("Settings") |
+
+**Weights declared: 2 only — regular (400) and semibold (600).** Weight 500 is not used
+anywhere in this phase. Body and Label both use 400; Heading and Display both use 600.
+
+**Primary focal point:** On the Settings page, the section title "Chaves de API" rendered
+at Display size (20px, weight 600) is the primary focal point — it anchors the user's
+eye on entry and establishes the hierarchy for all content below it.
 
 **Font scale selector (FOUND-03 D-07):**
 Three levels controlled via `--font-scale` CSS variable on `<html>`:
@@ -156,7 +164,7 @@ No third-party registries. No third-party blocks. Registry safety gate: not requ
 ```
 
 - Sidebar: `w-12` (48px), `h-screen`, `fixed left-0 top-0`, `flex flex-col`
-- Module icons: top section, stacked vertically, 40px touch target each
+- Module icons: top section, stacked vertically, 40px touch target each (component sizing, not spacing token)
 - Settings gear icon: bottom of sidebar column (`mt-auto`)
 - Main content: `ml-12 h-screen overflow-auto`
 
@@ -183,7 +191,7 @@ No third-party registries. No third-party blocks. Registry safety gate: not requ
 
 - Settings sub-nav: `w-40` (160px), left side of settings content area
 - Settings panel: `flex-1`, `px-8 py-6`, scrollable
-- Sub-nav item height: 40px, `text-sm font-medium`
+- Sub-nav item height: 40px (component sizing), `text-sm font-medium`
 
 ### API Key Field Pattern (D-06)
 
@@ -242,12 +250,14 @@ product language established in REQUIREMENTS.md.
 | Error state — key already exists prompt | "Uma chave já está configurada. Clique em Editar para substituí-la." |
 | Destructive action — delete API key | "Remover chave" |
 | Destructive confirmation — delete API key | "Remover a chave de [Provider]? Esta ação não pode ser desfeita." |
-| Destructive confirm button | "Remover" |
-| Destructive cancel button | "Cancelar" |
+| Destructive confirm button | "Confirmar remoção" |
+| Destructive cancel button | "Manter chave" |
 
 **Destructive confirmation approach:** Inline confirmation pattern (no separate modal).
 After clicking "Remover chave", the button area transforms to show:
-`[Remover] [Cancelar]` inline — confirm requires a second deliberate click on "Remover".
+`[Confirmar remoção] [Manter chave]` inline — confirm requires a second deliberate click
+on "Confirmar remoção". Both labels are contextual and unambiguous: "Confirmar remoção"
+states the action being confirmed; "Manter chave" states what happens if the user backs out.
 
 ---
 
