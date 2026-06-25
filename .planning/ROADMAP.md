@@ -33,7 +33,14 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can select a default model per task type (chat, agents, benchmark) via the settings screen
   4. A streaming response from any LLM provider arrives token-by-token via the Channel API pattern — no event-loop emission, memory stable over a 10-minute session
   5. A distributable build can be produced for macOS (notarized, with correct JIT entitlements) and Windows (code-signed), and the updater keypair is backed up with documented recovery procedure
-**Plans**: TBD
+**Plans**: 6 plans
+Plans:
+- [ ] 01-00-PLAN.md — Wave 0: Test scaffold (Vitest config + 8 requirement test files)
+- [ ] 01-01-PLAN.md — Wave 1: Tauri v2 scaffold + 7-crate Cargo workspace + SQLite WAL + Drizzle proxy
+- [ ] 01-02-PLAN.md — Wave 2: App shell layout (Sidebar, AppShell, TanStack Router, module stubs)
+- [ ] 01-03-PLAN.md — Wave 3: Settings page content (API key management + model selection)
+- [ ] 01-04-PLAN.md — Wave 4: Appearance section + Channel API streaming pattern
+- [ ] 01-05-PLAN.md — Wave 5: GitHub Actions CI pipeline + updater keypair + SIGNING.md
 **UI hint**: yes
 
 ### Phase 2: LLM Chat
@@ -126,7 +133,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/6 | Planned | - |
 | 2. LLM Chat | 0/TBD | Not started | - |
 | 3. Knowledge Base + RAG | 0/TBD | Not started | - |
 | 4. LLM Benchmarking | 0/TBD | Not started | - |
@@ -149,4 +156,4 @@ Recommendation: Add DASH-01 to formalize coverage. This can be done during Phase
 
 ---
 
-*Generated: 2026-06-25*
+*Generated: 2026-06-25 | Phase 1 planned: 2026-06-25*
