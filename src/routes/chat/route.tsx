@@ -13,26 +13,26 @@ export const Route = createFileRoute("/chat")({
 });
 
 function ChatLayout() {
-  // Explicit viewport-based dimensions so react-resizable-panels ResizeObserver
-  // measures the correct container size regardless of flex/percentage cascade.
-  // Sidebar is w-12 = 3rem; calc(100vw - 3rem) = remaining width after sidebar.
   return (
-    <ResizablePanelGroup
-      direction="horizontal"
-      style={{ height: "100vh", width: "calc(100vw - 3rem)" }}
-    >
-      {/* D-02: Conversation list — default ~280px, range 20%-40% of viewport */}
-      <ResizablePanel defaultSize={22} minSize={18} maxSize={35}>
-        <ConversationList />
-      </ResizablePanel>
+    // Outer div provides explicit pixel dimensions so react-resizable-panels'
+    // ResizeObserver measures the correct container size. ResizablePanelGroup
+    // fills 100% of this wrapper via its built-in h-full w-full classes.
+    // Sidebar = w-12 = 3rem; calc(100vw - 3rem) leaves the correct remaining width.
+    <div style={{ height: "100vh", width: "calc(100vw - 3rem)", overflow: "hidden" }}>
+      <ResizablePanelGroup direction="horizontal" className="h-full">
+        {/* D-02: Conversation list — default ~280px, range 20%-40% of viewport */}
+        <ResizablePanel defaultSize={22} minSize={18} maxSize={35}>
+          <ConversationList />
+        </ResizablePanel>
 
-      {/* Drag handle with visual indicator */}
-      <ResizableHandle withHandle />
+        {/* Drag handle with visual indicator */}
+        <ResizableHandle withHandle />
 
-      {/* Chat view — fills remaining space */}
-      <ResizablePanel defaultSize={78}>
-        <Outlet />
-      </ResizablePanel>
-    </ResizablePanelGroup>
+        {/* Chat view — fills remaining space */}
+        <ResizablePanel defaultSize={78}>
+          <Outlet />
+        </ResizablePanel>
+      </ResizablePanelGroup>
+    </div>
   );
 }
