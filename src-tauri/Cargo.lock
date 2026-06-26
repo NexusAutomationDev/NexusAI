@@ -2318,6 +2318,7 @@ dependencies = [
  "specta",
  "tauri",
  "tauri-specta",
+ "tokio",
 ]
 
 [[package]]
