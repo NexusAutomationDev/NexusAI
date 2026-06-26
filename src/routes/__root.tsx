@@ -1,9 +1,6 @@
-import { createRootRoute, Outlet } from "@tanstack/react-router";
+import { createRootRoute } from "@tanstack/react-router";
+import { AppShell } from "@/components/layout/AppShell";
 
 export const Route = createRootRoute({
-  component: () => (
-    <div className="flex h-screen w-screen overflow-hidden bg-background text-foreground">
-      <Outlet />
-    </div>
-  ),
+  component: AppShell,
 });

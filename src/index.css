@@ -1,17 +1,74 @@
 @import "tailwindcss";
 
-:root {
-  --font-scale: 1;
-  --accent: violet;
+/* Dark mode: toggle .dark class on <html> */
+@layer base {
+  :root {
+    /* Light theme tokens (shadcn/ui defaults) */
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 263.4 70% 50.4%;
+    --radius: 0.5rem;
+    --font-scale: 1; /* controlled by appearance store */
+
+    /* Default accent: violet (data-accent="violet" or unset) */
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+  }
+
+  .dark {
+    /* Dark theme tokens — D-02: dark-first, Linear/Raycast aesthetic */
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.8% 64.9%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 263.4 70% 50.4%;
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+  }
 }
 
+/* Accent color overrides per data-accent attribute on <html> */
+/* D-08: 5 predefined palette options only */
+[data-accent="violet"] {
+  --primary: 263.4 70% 50.4%;
+  --ring: 263.4 70% 50.4%;
+}
+[data-accent="blue"] {
+  --primary: 221.2 83.2% 53.3%;
+  --ring: 221.2 83.2% 53.3%;
+}
+[data-accent="green"] {
+  --primary: 142.1 76.2% 36.3%;
+  --ring: 142.1 76.2% 36.3%;
+}
+[data-accent="orange"] {
+  --primary: 24.6 95% 53.1%;
+  --ring: 24.6 95% 53.1%;
+}
+[data-accent="red"] {
+  --primary: 0 72.2% 50.6%;
+  --ring: 0 72.2% 50.6%;
+}
+
+/* Font scale system — D-07 */
 html {
-  font-size: calc(16px * var(--font-scale));
+  font-size: calc(14px * var(--font-scale, 1));
 }
 
-body {
-  margin: 0;
-  min-height: 100vh;
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-}
+/* Base resets */
+* { @apply border-border; }
+body { @apply bg-background text-foreground; }

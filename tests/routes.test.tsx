@@ -1,21 +1,23 @@
 import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { ModuleStub } from '../src/components/layout/ModuleStub';
 
-describe('FOUND-04 — module stub routes (requires Plan 02 Task 1)', () => {
-  it('TODO: Chat stub route renders without throwing', () => {
-    // Real test: render(<ChatStub />) and expect no errors
-    expect(true).toBe(true); // placeholder
+describe('FOUND-04 — module stub routes', () => {
+  it('ModuleStub renders module name', () => {
+    render(<ModuleStub moduleName="Chat" />);
+    expect(screen.getByText('Chat')).toBeTruthy();
   });
 
-  it('TODO: KB stub route renders without throwing', () => {
-    expect(true).toBe(true); // placeholder
+  it('ModuleStub renders "Em breve" text', () => {
+    render(<ModuleStub moduleName="Gmail" />);
+    expect(screen.getByText('Em breve')).toBeTruthy();
   });
 
-  it('TODO: Gmail stub route renders without throwing', () => {
-    expect(true).toBe(true); // placeholder
-  });
-
-  it('TODO: Settings route renders without throwing', () => {
-    expect(true).toBe(true); // placeholder
+  it('ModuleStub renders without throwing for all module names', () => {
+    const modules = ['Chat', 'Base de Conhecimento', 'Gmail', 'Calendário', 'MCPs', 'Agentes'];
+    modules.forEach((name) => {
+      expect(() => render(<ModuleStub moduleName={name} />)).not.toThrow();
+    });
   });
 });
