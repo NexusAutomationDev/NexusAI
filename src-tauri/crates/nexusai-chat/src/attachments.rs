@@ -81,3 +81,55 @@ pub async fn pick_and_encode_file_impl(app: tauri::AppHandle) -> Result<FileAtta
         file_size_bytes: file_size,
     })
 }
+
+/// Encode a file at a known path to base64 (used by drag-drop, which provides OS file paths).
+/// Applies the same validation as pick_and_encode_file (size, type, filename sanitization).
+/// T-02-06-03: Paths from Tauri onDragDropEvent are validated here — same allowlist + 10MB cap.
+pub async fn encode_file_from_path_impl(path: String) -> Result<FileAttachment, String> {
+    let file_path = std::path::Path::new(&path);
+
+    let ext = file_path
+        .extension()
+        .and_then(|e| e.to_str())
+        .unwrap_or("")
+        .to_lowercase();
+
+    let mime_type = ALLOWED_TYPES
+        .iter()
+        .find(|(e, _)| *e == ext.as_str())
+        .map(|(_, m)| *m)
+        .ok_or_else(|| format!("Tipo de arquivo não suportado: .{ext}"))?;
+
+    let contents = std::fs::read(file_path)
+        .map_err(|e| format!("Erro ao ler arquivo: {e}"))?;
+
+    // Enforce size limit — T-02-02-02: prevents DoS via large file encoding
+    let file_size = contents.len() as u64;
+    if file_size > MAX_FILE_SIZE_BYTES {
+        return Err(format!(
+            "Arquivo muito grande. Tamanho: {}MB. Limite: 10MB.",
+            file_size / (1024 * 1024)
+        ));
+    }
+
+    use base64::Engine;
+    let base64_data = base64::engine::general_purpose::STANDARD.encode(&contents);
+
+    let filename = file_path
+        .file_name()
+        .unwrap_or_default()
+        .to_string_lossy()
+        .to_string();
+
+    // Sanitize filename — T-02-02-01: strip directory separators
+    let safe_filename = filename
+        .replace(['/', '\\', '.'], "_")
+        .replace("__", "_");
+
+    Ok(FileAttachment {
+        filename: safe_filename,
+        mime_type: mime_type.to_string(),
+        base64_data,
+        file_size_bytes: file_size,
+    })
+}

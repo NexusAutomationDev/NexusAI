@@ -53,6 +53,7 @@ pub fn run() {
             nexusai_chat::commands::stream_chat,
             nexusai_chat::commands::stop_streaming,
             nexusai_chat::commands::pick_and_encode_file,
+            nexusai_chat::commands::encode_file_from_path,
             nexusai_chat::commands::generate_conversation_title,
         ])
         .run(tauri::generate_context!())

@@ -1,5 +1,5 @@
 //! nexusai-chat crate — LLM streaming, file attachments, conversation title generation.
-//! Tauri commands: stream_chat, stop_streaming, pick_and_encode_file, generate_conversation_title.
+//! Tauri commands: stream_chat, stop_streaming, pick_and_encode_file, encode_file_from_path, generate_conversation_title.
 //! Uses inner module pattern for rustc 1.96 + specta compatibility.
 
 pub mod schema;
@@ -45,6 +45,15 @@ pub mod commands {
         crate::attachments::pick_and_encode_file_impl(app).await
     }
 
+    /// Encode a file at a known OS path to base64 (used by drag-drop — D-15).
+    /// Tauri onDragDropEvent provides file paths; this command validates and encodes them.
+    /// Applies same allowlist + 10MB limit as pick_and_encode_file (T-02-06-03).
+    #[tauri::command]
+    #[specta::specta]
+    pub async fn encode_file_from_path(path: String) -> Result<FileAttachment, String> {
+        crate::attachments::encode_file_from_path_impl(path).await
+    }
+
     /// Auto-generate a 3-8 word conversation title from the first exchange (D-06).
     /// Called by MessageInput.tsx after the first AI response completes.
     #[tauri::command]
@@ -62,6 +71,7 @@ pub mod commands {
             stream_chat,
             stop_streaming,
             pick_and_encode_file,
+            encode_file_from_path,
             generate_conversation_title,
         ]
     }
@@ -74,6 +84,7 @@ pub mod commands {
             stream_chat,
             stop_streaming,
             pick_and_encode_file::<tauri::Wry>,
+            encode_file_from_path,
             generate_conversation_title,
         ]
     }
