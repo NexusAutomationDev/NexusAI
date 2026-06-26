@@ -19,7 +19,7 @@ const ALLOWED_TYPES: &[(&str, &str)] = &[
     ),
 ];
 
-pub async fn pick_and_encode_file_impl(app: tauri::AppHandle) -> Result<FileAttachment, String> {
+pub async fn pick_and_encode_file_impl<R: tauri::Runtime>(app: tauri::AppHandle<R>) -> Result<FileAttachment, String> {
     use tauri_plugin_dialog::DialogExt;
 
     let file_path = app
@@ -32,8 +32,8 @@ pub async fn pick_and_encode_file_impl(app: tauri::AppHandle) -> Result<FileAtta
         .blocking_pick_file()
         .ok_or_else(|| "Seleção cancelada".to_string())?;
 
-    let path_str = file_path.to_string_lossy().to_string();
-    let path = Path::new(&path_str);
+    let path = file_path.into_path().map_err(|e| format!("Erro ao obter caminho: {e}"))?.to_path_buf();
+    let path = path.as_path();
 
     // Validate extension — T-02-02-01: allowlist prevents path traversal via mime-type confusion
     let ext = path

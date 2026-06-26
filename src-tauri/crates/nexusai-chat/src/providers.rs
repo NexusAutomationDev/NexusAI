@@ -102,6 +102,7 @@ pub fn build_api_messages(
                             )),
                             name: None,
                             tool_calls: None,
+                            function_call: None,
                             refusal: None,
                             audio: None,
                         }
@@ -119,7 +120,6 @@ pub fn build_api_messages(
         let mut parts: Vec<ChatCompletionRequestUserMessageContentPart> = vec![
             ChatCompletionRequestUserMessageContentPart::Text(
                 async_openai::types::ChatCompletionRequestMessageContentPartText {
-                    r#type: async_openai::types::ChatCompletionRequestMessageContentPartTextType::Text,
                     text: msg.content.clone(),
                 }
             ),
@@ -130,7 +130,6 @@ pub fn build_api_messages(
                 let data_url = format!("data:{};base64,{}", att.mime_type, att.base64_data);
                 let image_part = ChatCompletionRequestUserMessageContentPart::ImageUrl(
                     async_openai::types::ChatCompletionRequestMessageContentPartImage {
-                        r#type: async_openai::types::ChatCompletionRequestMessageContentPartImageType::ImageUrl,
                         image_url: async_openai::types::ImageUrl {
                             url: data_url,
                             detail: None,
