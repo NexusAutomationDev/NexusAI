@@ -1,0 +1,12 @@
+[package]
+name = "nexusai-settings"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+tauri = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+keyring = { version = "3", features = ["sync-secret-service"] }
+tauri-specta = { version = "=2.0.0-rc.25", features = ["derive", "typescript"] }
+specta = { version = "=2.0.0-rc.25" }
