@@ -43,7 +43,7 @@ pub struct FileAttachment {
     pub filename: String,
     pub mime_type: String,
     pub base64_data: String,
-    pub file_size_bytes: u64,
+    pub file_size_bytes: u32,
 }
 
 /// Input message shape sent from frontend to stream_chat command.

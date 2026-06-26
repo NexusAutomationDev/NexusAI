@@ -1,9 +1,8 @@
 //! File picker and base64 encoder for chat attachments (CHAT-04, D-15 to D-19).
 
-use std::path::Path;
 use crate::schema::FileAttachment;
 
-const MAX_FILE_SIZE_BYTES: u64 = 10 * 1024 * 1024; // D-17: 10MB limit
+const MAX_FILE_SIZE_BYTES: u32 = 10 * 1024 * 1024; // D-17: 10MB limit
 
 const ALLOWED_TYPES: &[(&str, &str)] = &[
     ("png", "image/png"),
@@ -51,7 +50,7 @@ pub async fn pick_and_encode_file_impl<R: tauri::Runtime>(app: tauri::AppHandle<
     let contents = std::fs::read(path).map_err(|e| format!("Erro ao ler arquivo: {e}"))?;
 
     // Enforce size limit — T-02-02-02: prevents DoS via large file encoding
-    let file_size = contents.len() as u64;
+    let file_size = contents.len() as u32;
     if file_size > MAX_FILE_SIZE_BYTES {
         return Err(format!(
             "Arquivo muito grande. Tamanho: {}MB. Limite: 10MB.",
@@ -104,7 +103,7 @@ pub async fn encode_file_from_path_impl(path: String) -> Result<FileAttachment, 
         .map_err(|e| format!("Erro ao ler arquivo: {e}"))?;
 
     // Enforce size limit — T-02-02-02: prevents DoS via large file encoding
-    let file_size = contents.len() as u64;
+    let file_size = contents.len() as u32;
     if file_size > MAX_FILE_SIZE_BYTES {
         return Err(format!(
             "Arquivo muito grande. Tamanho: {}MB. Limite: 10MB.",
