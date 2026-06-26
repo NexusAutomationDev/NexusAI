@@ -84,23 +84,23 @@ Declared values (must be multiples of 4):
 |------|-------|-------|
 | Dominant (60%) | `hsl(224 71.4% 4.1%)` (dark mode) | Main background, message list background |
 | Secondary (30%) | `hsl(215 27.9% 16.9%)` (dark mode) | Conversation list background, user message bubbles, code block backgrounds |
-| Accent (10%) | `hsl(263.4 70% 50.4%)` (violet, default) | **Reserved for:** Active conversation ring, send button, model badge (current), stop streaming button, focus rings |
+| Accent (10%) | `hsl(263.4 70% 50.4%)` (violet, default) | **Reserved for:** Active conversation ring, send button, stop streaming button, focus rings |
 | Destructive | `hsl(0 72.2% 50.6%)` (red) | Delete conversation action only |
 
 **Accent reserved for:**
 1. Active conversation indicator (2px ring on selected conversation)
 2. Send button background (primary CTA)
 3. Stop streaming button (interrupt action)
-4. Model badge for current model in message header
-5. Focus rings (keyboard navigation)
+4. Focus rings (keyboard navigation)
 
-**NOT used for:** Message text, links within markdown, timestamps, generic interactive elements
+**NOT used for:** Message text, links within markdown, timestamps, model badges, generic interactive elements
 
 **Color semantics:**
 - User messages: `bg-secondary` (slightly elevated from background)
 - AI messages: `bg-card` (same as dominant background, but distinct container)
 - Code blocks: `bg-muted` (slightly lighter than secondary for contrast)
 - Inline code: `bg-muted` with `text-muted-foreground`
+- Model badges: `bg-muted` with `text-muted-foreground` (all AI messages show model badge, using muted color prevents accent overuse)
 
 **Light mode:** Phase 1 established light mode tokens (not dark-first, but supported). Phase 2 inherits light mode support but optimizes for dark mode.
 
