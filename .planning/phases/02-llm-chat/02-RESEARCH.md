@@ -706,27 +706,31 @@ async function runMigrations(db: Database) {
 
 **If this table is empty:** All claims in this research were verified or cited — no user confirmation needed.
 
-## Open Questions
+## Open Questions (RESOLVED)
 
 1. **Conversation title generation timing**
    - What we know: Generate title after first assistant response (DeerFlow pattern). Use cheap model (gpt-4o-mini).
    - What's unclear: Should we show "New Conversation" placeholder until title is generated, or block send until title arrives?
    - Recommendation: Show "New Conversation" placeholder, generate title in background, update when ready. Avoids latency perception.
+   - **RESOLVED:** Plan 01 creates the conversation with title "Nova Conversa" as placeholder; Plan 06 triggers background title generation after the first assistant response and updates the conversation record (see useUpdateConversationTitle hook). No blocking.
 
 2. **Attachment file storage cleanup**
    - What we know: Files stored on disk, paths in DB. Soft-delete marks conversation as deleted.
    - What's unclear: When (if ever) do we delete attachment files from disk?
    - Recommendation: Phase 2 never deletes files (disk is cheap). Add cleanup feature in future phase ("purge deleted conversations older than 30 days").
+   - **RESOLVED:** Phase 2 does not implement any disk cleanup. Soft-deleted conversations leave attachment files on disk. Cleanup deferred by omission — no plan in Phase 2 addresses it.
 
 3. **Model picker UI placement**
    - What we know: Per-message model picker next to send button (D-20).
    - What's unclear: Should we show current model in message input area, or only in dropdown?
    - Recommendation: Show current model as button label (e.g., "GPT-4o ▼"), clicking opens dropdown. Clear what will be used without opening menu.
+   - **RESOLVED:** Plan 06 (MessageInput) implements a Select component (shadcn Select with SelectValue) that displays the current model name as the button label. Clicking opens the dropdown. SelectValue shows whichever model is currently active from useChatStore.
 
 4. **Error handling for streaming failures**
    - What we know: Display inline error message (D-25).
    - What's unclear: Should we auto-retry on network errors, or always require manual retry?
    - Recommendation: No auto-retry (user may want to edit prompt, switch model). Show error + "Retry" button.
+   - **RESOLVED:** Plan 06 (MessageInput / streaming logic) formats errors inline using a formatError helper and renders a close button (X) to dismiss. No auto-retry. User can re-send manually or switch model.
 
 ## Security Domain
 
