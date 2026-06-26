@@ -48,9 +48,11 @@ import type { FileAttachment } from "@/lib/stores/chat";
 interface MessageInputProps {
   conversationId: string;
   onSendComplete?: () => void;
+  editDraft?: string | null;         // D-24: pre-fill textarea with edited message content
+  onEditDraftConsumed?: () => void;  // D-24: called after textarea is populated
 }
 
-export function MessageInput({ conversationId, onSendComplete }: MessageInputProps) {
+export function MessageInput({ conversationId, onSendComplete, editDraft, onEditDraftConsumed }: MessageInputProps) {
   const [inputText, setInputText] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -79,6 +81,22 @@ export function MessageInput({ conversationId, onSendComplete }: MessageInputPro
   useEffect(() => {
     if (!currentModel) setCurrentModel(chatModel);
   }, [chatModel, currentModel, setCurrentModel]);
+
+  // D-24: Pre-fill textarea when edit draft is provided
+  useEffect(() => {
+    if (editDraft) {
+      setInputText(editDraft);
+      // Move cursor to end of text
+      setTimeout(() => {
+        if (textareaRef.current) {
+          textareaRef.current.focus();
+          const len = textareaRef.current.value.length;
+          textareaRef.current.setSelectionRange(len, len);
+        }
+      }, 0);
+      onEditDraftConsumed?.();
+    }
+  }, [editDraft, onEditDraftConsumed]);
 
   // D-15: Tauri window drag-drop event handler
   // The browser DataTransfer API is empty in Tauri webviews; use the Tauri-native event instead.
