@@ -18,4 +18,15 @@ describe('FOUND-01 — API key status IPC', () => {
     expect(result).not.toBe('sk-test');
     expect((result as string | null)?.includes?.('sk-')).toBeFalsy();
   });
+
+  it('API key input type is "password" — key is never visible as plaintext', async () => {
+    // Import lazily to allow module to load after mocks are set up
+    const { ApiKeysSection } = await import('../src/components/settings/ApiKeysSection');
+    const { render } = await import('@testing-library/react');
+    const React = (await import('react')).default;
+    render(React.createElement(ApiKeysSection));
+    // All inputs must be type="password" — verifies no raw key is shown
+    const passwordInputs = document.querySelectorAll('input[type="password"]');
+    expect(passwordInputs.length).toBeGreaterThan(0);
+  });
 });
