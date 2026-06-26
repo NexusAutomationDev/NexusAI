@@ -1,5 +1,23 @@
 @import "tailwindcss";
 
+/* Map shadcn/ui CSS variables to Tailwind v4 color utilities */
+@theme inline {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --radius: var(--radius);
+}
+
 /* Dark mode: toggle .dark class on <html> */
 @layer base {
   :root {
@@ -42,32 +60,14 @@
 }
 
 /* Accent color overrides per data-accent attribute on <html> */
-/* D-08: 5 predefined palette options only */
-[data-accent="violet"] {
-  --primary: 263.4 70% 50.4%;
-  --ring: 263.4 70% 50.4%;
-}
-[data-accent="blue"] {
-  --primary: 221.2 83.2% 53.3%;
-  --ring: 221.2 83.2% 53.3%;
-}
-[data-accent="green"] {
-  --primary: 142.1 76.2% 36.3%;
-  --ring: 142.1 76.2% 36.3%;
-}
-[data-accent="orange"] {
-  --primary: 24.6 95% 53.1%;
-  --ring: 24.6 95% 53.1%;
-}
-[data-accent="red"] {
-  --primary: 0 72.2% 50.6%;
-  --ring: 0 72.2% 50.6%;
-}
+[data-accent="violet"] { --primary: 263.4 70% 50.4%; --ring: 263.4 70% 50.4%; }
+[data-accent="blue"]   { --primary: 221.2 83.2% 53.3%; --ring: 221.2 83.2% 53.3%; }
+[data-accent="green"]  { --primary: 142.1 76.2% 36.3%; --ring: 142.1 76.2% 36.3%; }
+[data-accent="orange"] { --primary: 24.6 95% 53.1%; --ring: 24.6 95% 53.1%; }
+[data-accent="red"]    { --primary: 0 72.2% 50.6%; --ring: 0 72.2% 50.6%; }
 
-/* Font scale system — D-07 */
-html {
-  font-size: calc(14px * var(--font-scale, 1));
-}
+/* Font scale system */
+html { font-size: calc(14px * var(--font-scale, 1)); }
 
 /* Base resets */
 * { @apply border-border; }
