@@ -1,17 +1,47 @@
-import { describe, it, expect } from 'vitest';
-// Import will resolve once Plan 01 creates the store at src/lib/stores/settings.ts
-// For Wave 0 (before production code exists), this test is EXPECTED TO FAIL with
-// "Cannot find module" — that is the correct RED state.
-// Once Plan 03 Task 2 creates the store, this test MUST pass.
+import { describe, it, expect, beforeEach } from 'vitest';
+// mockIPC from tests/setup.ts intercepts 'plugin:store|get' and 'plugin:store|set'
 
-// Placeholder test structure — DO NOT add production code here.
-describe('FOUND-02 — model selection store (requires Plan 03 Task 2)', () => {
-  it('TODO: model selection persists across store re-creation', () => {
-    // This test is intentionally pending until src/lib/stores/settings.ts exists
-    expect(true).toBe(true); // placeholder — will be replaced with real assertions
+describe('FOUND-02 — model selection store', () => {
+  it('useSettingsStore has chatModel, agentsModel, benchmarkModel state', async () => {
+    const { useSettingsStore } = await import('../src/lib/stores/settings');
+    const store = useSettingsStore.getState();
+    expect('chatModel' in store).toBe(true);
+    expect('agentsModel' in store).toBe(true);
+    expect('benchmarkModel' in store).toBe(true);
   });
 
-  it('TODO: default model per task type (chat, agents, benchmark) is defined', () => {
-    expect(true).toBe(true); // placeholder
+  it('default model for all task types is gpt-4o', async () => {
+    const { useSettingsStore } = await import('../src/lib/stores/settings');
+    const { chatModel, agentsModel, benchmarkModel } = useSettingsStore.getState();
+    expect(chatModel).toBe('gpt-4o');
+    expect(agentsModel).toBe('gpt-4o');
+    expect(benchmarkModel).toBe('gpt-4o');
+  });
+
+  it('setChatModel updates chatModel in store', async () => {
+    const { useSettingsStore } = await import('../src/lib/stores/settings');
+    await useSettingsStore.getState().setChatModel('gpt-4o-mini');
+    expect(useSettingsStore.getState().chatModel).toBe('gpt-4o-mini');
+  });
+
+  it('setAgentsModel updates agentsModel in store', async () => {
+    const { useSettingsStore } = await import('../src/lib/stores/settings');
+    await useSettingsStore.getState().setAgentsModel('gemini-pro');
+    expect(useSettingsStore.getState().agentsModel).toBe('gemini-pro');
+  });
+
+  it('setBenchmarkModel updates benchmarkModel in store', async () => {
+    const { useSettingsStore } = await import('../src/lib/stores/settings');
+    await useSettingsStore.getState().setBenchmarkModel('gemini-2.0-flash');
+    expect(useSettingsStore.getState().benchmarkModel).toBe('gemini-2.0-flash');
+  });
+
+  it('store actions are functions', async () => {
+    const { useSettingsStore } = await import('../src/lib/stores/settings');
+    const state = useSettingsStore.getState();
+    expect(typeof state.setChatModel).toBe('function');
+    expect(typeof state.setAgentsModel).toBe('function');
+    expect(typeof state.setBenchmarkModel).toBe('function');
+    expect(typeof state.load).toBe('function');
   });
 });
