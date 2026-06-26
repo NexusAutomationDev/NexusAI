@@ -3,12 +3,8 @@ import ReactDOM from "react-dom/client";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen"; // TanStack Router generated
 import { runMigrations } from "./lib/db/proxy";
+import { useAppearance } from "./lib/stores/appearance";
 import "./index.css";
-
-// Apply dark mode default immediately (D-02) — before React renders
-// Overridden by appearance store load in Plan 04
-document.documentElement.classList.add("dark");
-document.documentElement.setAttribute("data-accent", "violet");
 
 const router = createRouter({ routeTree });
 
@@ -19,6 +15,11 @@ declare module "@tanstack/react-router" {
 }
 
 async function main() {
+  // Restore persisted theme/accent/font-scale before React renders (D-09)
+  // Falls back to dark theme + violet accent if no persisted preference (D-02)
+  const { load: loadAppearance } = useAppearance.getState();
+  await loadAppearance();
+
   // Run DB migrations before mounting React (FOUND-06)
   await runMigrations();
 
