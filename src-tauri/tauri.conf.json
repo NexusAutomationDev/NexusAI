@@ -38,8 +38,10 @@
   },
   "plugins": {
     "updater": {
-      "pubkey": "",
-      "endpoints": []
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDlFRDI1QjFGRjIzRTRFQUIKUldTclRqN3lIMXZTbmtpNGdsWlRRdzFCMzZ3M2RYdndKNk5YZGtSWTlWNGtkWVdRbkRkU2pJbnAK",
+      "endpoints": [
+        "https://github.com/biellil/NexusAI/releases/latest/download/update.json"
+      ]
     }
   }
 }
