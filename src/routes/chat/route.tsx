@@ -20,8 +20,9 @@ function ChatLayout() {
     // Sidebar = w-12 = 3rem; calc(100vw - 3rem) leaves the correct remaining width.
     <div style={{ height: "100vh", width: "calc(100vw - 3rem)", overflow: "hidden" }}>
       <ResizablePanelGroup direction="horizontal" className="h-full" autoSaveId="nexusai-chat-layout-v1">
-        {/* D-02: Conversation list — default ~280px, range 20%-40% of viewport */}
-        <ResizablePanel defaultSize={22} minSize={18} maxSize={35}>
+        {/* D-02: Conversation list — default 22% (~254px). In v4, minSize/maxSize are
+            in pixels so they're omitted here to avoid clamping the defaultSize (%). */}
+        <ResizablePanel defaultSize={22}>
           <ConversationList />
         </ResizablePanel>
 
