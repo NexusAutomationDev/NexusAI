@@ -4,21 +4,75 @@ import { invoke as __TAURI_INVOKE, Channel } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
-	setApiKey: (provider: string, key: string) => typedError<null, string>(__TAURI_INVOKE("set_api_key", { provider, key })),
-	getApiKeyStatus: (provider: string) => typedError<ApiKeyStatus, string>(__TAURI_INVOKE("get_api_key_status", { provider })),
-	deleteApiKey: (provider: string) => typedError<null, string>(__TAURI_INVOKE("delete_api_key", { provider })),
 	/**
-	 *  Demo command — validates the Channel API pattern works end-to-end.
-	 *  Phase 2 replaces this with real LLM streaming via reqwest.
-	 *  The function signature and Channel<StreamEvent> usage are the canonical template.
-	 *  T-01-04-01: bounded by prompt word count; Phase 2 must add max-token guard.
+	 *  Stream LLM response token-by-token via Channel API (CHAT-01, FOUND-05).
+	 *  Sends full history to support per-message model switching (D-23, CHAT-03).
 	 */
-	streamLlmDemo: (prompt: string, onEvent: Channel<StreamEvent>) => typedError<null, string>(__TAURI_INVOKE("stream_llm_demo", { prompt, onEvent })),
+	streamChat: (input: StreamChatInput, onEvent: Channel<StreamEvent>) => typedError<null, string>(__TAURI_INVOKE("stream_chat", { input, onEvent })),
+	/**  Cancel an in-progress stream for a conversation (D-14: stop button). */
+	stopStreaming: (conversationId: string) => typedError<null, string>(__TAURI_INVOKE("stop_streaming", { conversationId })),
+	/**
+	 *  Open OS native file picker, validate, and return file as base64 (CHAT-04, D-15).
+	 *  Enforces 10MB limit and allowlist of types (D-17).
+	 *  AppHandle<R> is injected automatically by Tauri — not deserialized from IPC.
+	 */
+	pickAndEncodeFile: () => typedError<FileAttachment, string>(__TAURI_INVOKE("pick_and_encode_file")),
+	/**
+	 *  Encode a file at a known OS path to base64 (used by drag-drop — D-15).
+	 *  Tauri onDragDropEvent provides file paths; this command validates and encodes them.
+	 *  Applies same allowlist + 10MB limit as pick_and_encode_file (T-02-06-03).
+	 */
+	encodeFileFromPath: (path: string) => typedError<FileAttachment, string>(__TAURI_INVOKE("encode_file_from_path", { path })),
+	/**
+	 *  Auto-generate a 3-8 word conversation title from the first exchange (D-06).
+	 *  Called by MessageInput.tsx after the first AI response completes.
+	 */
+	generateConversationTitle: (input: GenerateTitleInput) => typedError<GenerateTitleOutput, string>(__TAURI_INVOKE("generate_conversation_title", { input })),
 };
 
 /* Types */
 export type ApiKeyStatus = {
 	configured: boolean,
+};
+
+/**
+ *  Input message shape sent from frontend to stream_chat command.
+ *  Each message in the conversation history.
+ */
+export type ChatMessage = {
+	role: MessageRole,
+	content: string,
+	attachments: FileAttachment[] | null,
+};
+
+/**  File attachment data passed from Tauri dialog → Rust → frontend for preview. */
+export type FileAttachment = {
+	filename: string,
+	mimeType: string,
+	base64Data: string,
+	fileSizeBytes: number,
+};
+
+/**  Input to the generate_conversation_title command (D-06). */
+export type GenerateTitleInput = {
+	conversationId: string,
+	firstUserMessage: string,
+	firstAssistantMessage: string,
+	model: string,
+};
+
+/**  Output from generate_conversation_title. */
+export type GenerateTitleOutput = {
+	title: string,
+};
+
+export type MessageRole = "user" | "assistant";
+
+/**  Input to the stream_chat command. */
+export type StreamChatInput = {
+	conversationId: string,
+	messages: ChatMessage[],
+	model: string,
 };
 
 /**
