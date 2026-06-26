@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { format, isToday, isYesterday, isWithinInterval, subDays } from "date-fns";
+import { format, isToday, isYesterday, isWithinInterval, subDays, isValid } from "date-fns";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -31,9 +31,25 @@ import {
 } from "@/lib/queries/chat";
 import type { Conversation } from "@/lib/db/schema";
 
+// Drizzle sqlite-proxy may return mode:'timestamp' columns as raw Unix-second integers,
+// Date objects, or undefined. This normalizes all cases to a valid Date or null.
+function toSafeDate(val: unknown): Date | null {
+  if (val === null || val === undefined) return null;
+  if (val instanceof Date) return isValid(val) ? val : null;
+  if (typeof val === "number") {
+    // SQLite stores timestamps as Unix seconds; JS Date uses milliseconds.
+    // Values < 1e10 are seconds (year ~2286 in seconds); >= 1e10 are already ms.
+    const d = val < 1e10 ? new Date(val * 1000) : new Date(val);
+    return isValid(d) ? d : null;
+  }
+  const d = new Date(String(val));
+  return isValid(d) ? d : null;
+}
+
 // D-07: Time-based section labels (Brazilian Portuguese per UI-SPEC)
 function getTimeSection(conversation: Conversation): string {
-  const date = new Date(conversation.updatedAt);
+  const date = toSafeDate(conversation.updatedAt);
+  if (!date) return "Mais antigos";
   if (isToday(date)) return "Hoje";
   if (isYesterday(date)) return "Ontem";
   const sevenDaysAgo = subDays(new Date(), 7);
@@ -204,6 +220,7 @@ export function ConversationList() {
                   );
                   const isActive = activeConversationId === conv.id;
                   const isFocused = focusedIndex === flatIdx;
+                  const updatedDate = toSafeDate(conv.updatedAt);
                   return (
                     <ContextMenu key={conv.id}>
                       <ContextMenuTrigger asChild>
@@ -226,7 +243,7 @@ export function ConversationList() {
                               {conv.title}
                             </span>
                             <span className="shrink-0 text-xs text-muted-foreground">
-                              {format(new Date(conv.updatedAt), "HH:mm")}
+                              {updatedDate ? format(updatedDate, "HH:mm") : ""}
                             </span>
                           </div>
                           {/* Model badge — only shown when lastModel is set */}
