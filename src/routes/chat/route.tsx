@@ -13,8 +13,14 @@ export const Route = createFileRoute("/chat")({
 });
 
 function ChatLayout() {
+  // Explicit viewport-based dimensions so react-resizable-panels ResizeObserver
+  // measures the correct container size regardless of flex/percentage cascade.
+  // Sidebar is w-12 = 3rem; calc(100vw - 3rem) = remaining width after sidebar.
   return (
-    <ResizablePanelGroup direction="horizontal" className="h-full">
+    <ResizablePanelGroup
+      direction="horizontal"
+      style={{ height: "100vh", width: "calc(100vw - 3rem)" }}
+    >
       {/* D-02: Conversation list — default ~280px, range 20%-40% of viewport */}
       <ResizablePanel defaultSize={22} minSize={18} maxSize={35}>
         <ConversationList />
