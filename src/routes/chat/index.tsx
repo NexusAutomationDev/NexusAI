@@ -35,8 +35,6 @@ function ChatView() {
   const {
     activeConversationId,
     setActiveConversationId,
-    currentModel,
-    isStreaming,
   } = useChatStore();
 
   const conversationId = activeConversationId;
@@ -49,7 +47,7 @@ function ChatView() {
   const handleNewConversation = useCallback(async () => {
     const conv = await createConversation();
     setActiveConversationId(conv.id);
-    navigate({ to: "/chat/" });
+    navigate({ to: "/chat" });
   }, [createConversation, setActiveConversationId, navigate]);
 
   useEffect(() => {
@@ -100,10 +98,8 @@ function ChatView() {
 
       // 3. Find the user message just before the deleted AI message — this is what we re-send
       // We use the MessageInput's handleSend via pre-filling the editDraft with the user message
-      const precedingUserMessage = messages
-        .slice(0, targetIndex)
-        .filter((m) => m.role === "user")
-        .at(-1);
+      const userMsgs = messages.slice(0, targetIndex).filter((m) => m.role === "user");
+      const precedingUserMessage = userMsgs[userMsgs.length - 1];
 
       if (!precedingUserMessage) return;
 
