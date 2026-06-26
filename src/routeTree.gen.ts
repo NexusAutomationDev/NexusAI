@@ -14,6 +14,7 @@ import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as McpIndexRouteImport } from './routes/mcp/index'
 import { Route as KbIndexRouteImport } from './routes/kb/index'
 import { Route as GmailIndexRouteImport } from './routes/gmail/index'
+import { Route as ChatRouteImport } from './routes/chat/route'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar/index'
 import { Route as AgentsIndexRouteImport } from './routes/agents/index'
@@ -24,6 +25,11 @@ import { Route as SettingsApiKeysRouteImport } from './routes/settings/api-keys'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChatRoute = ChatRouteImport.update({
+  id: '/chat',
+  path: '/chat',
   getParentRoute: () => rootRouteImport,
 } as any)
 const SettingsIndexRoute = SettingsIndexRouteImport.update({
@@ -48,8 +54,8 @@ const GmailIndexRoute = GmailIndexRouteImport.update({
 } as any)
 const ChatIndexRoute = ChatIndexRouteImport.update({
   id: '/chat/',
-  path: '/chat/',
-  getParentRoute: () => rootRouteImport,
+  path: '/',
+  getParentRoute: () => ChatRoute,
 } as any)
 const CalendarIndexRoute = CalendarIndexRouteImport.update({
   id: '/calendar/',
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/settings/models': typeof SettingsModelsRoute
   '/agents/': typeof AgentsIndexRoute
   '/calendar/': typeof CalendarIndexRoute
+  '/chat': typeof ChatRoute
   '/chat/': typeof ChatIndexRoute
   '/gmail/': typeof GmailIndexRoute
   '/kb/': typeof KbIndexRoute
@@ -111,6 +118,7 @@ export interface FileRoutesById {
   '/settings/models': typeof SettingsModelsRoute
   '/agents/': typeof AgentsIndexRoute
   '/calendar/': typeof CalendarIndexRoute
+  '/chat': typeof ChatRoute
   '/chat/': typeof ChatIndexRoute
   '/gmail/': typeof GmailIndexRoute
   '/kb/': typeof KbIndexRoute
@@ -126,6 +134,7 @@ export interface FileRouteTypes {
     | '/settings/models'
     | '/agents/'
     | '/calendar/'
+    | '/chat'
     | '/chat/'
     | '/gmail/'
     | '/kb/'
@@ -152,6 +161,7 @@ export interface FileRouteTypes {
     | '/settings/models'
     | '/agents/'
     | '/calendar/'
+    | '/chat'
     | '/chat/'
     | '/gmail/'
     | '/kb/'
@@ -159,6 +169,10 @@ export interface FileRouteTypes {
     | '/settings/'
   fileRoutesById: FileRoutesById
 }
+export interface ChatRouteChildren {
+  ChatIndexRoute: typeof ChatIndexRoute
+}
+
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   SettingsApiKeysRoute: typeof SettingsApiKeysRoute
@@ -166,7 +180,7 @@ export interface RootRouteChildren {
   SettingsModelsRoute: typeof SettingsModelsRoute
   AgentsIndexRoute: typeof AgentsIndexRoute
   CalendarIndexRoute: typeof CalendarIndexRoute
-  ChatIndexRoute: typeof ChatIndexRoute
+  ChatRoute: typeof ChatRoute
   GmailIndexRoute: typeof GmailIndexRoute
   KbIndexRoute: typeof KbIndexRoute
   McpIndexRoute: typeof McpIndexRoute
@@ -210,12 +224,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof GmailIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat': {
+      id: '/chat'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/chat/': {
       id: '/chat/'
-      path: '/chat'
+      path: '/'
       fullPath: '/chat/'
       preLoaderRoute: typeof ChatIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof ChatRouteImport
     }
     '/calendar/': {
       id: '/calendar/'
@@ -255,6 +276,12 @@ declare module '@tanstack/react-router' {
   }
 }
 
+const chatRouteChildren: ChatRouteChildren = {
+  ChatIndexRoute: ChatIndexRoute,
+}
+
+const ChatRouteWithChildren = ChatRoute._addFileChildren(chatRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   SettingsApiKeysRoute: SettingsApiKeysRoute,
@@ -262,7 +289,7 @@ const rootRouteChildren: RootRouteChildren = {
   SettingsModelsRoute: SettingsModelsRoute,
   AgentsIndexRoute: AgentsIndexRoute,
   CalendarIndexRoute: CalendarIndexRoute,
-  ChatIndexRoute: ChatIndexRoute,
+  ChatRoute: ChatRouteWithChildren,
   GmailIndexRoute: GmailIndexRoute,
   KbIndexRoute: KbIndexRoute,
   McpIndexRoute: McpIndexRoute,
