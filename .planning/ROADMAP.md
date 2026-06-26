@@ -55,14 +55,14 @@ Plans:
   5. Code blocks in LLM responses render with syntax highlighting and Markdown formatting is applied throughout
 **Plans**: 9 plans
 Plans:
-- [ ] 02-00-PLAN.md — Wave 1: Test scaffolds for CHAT-01 through CHAT-05 (5 test files + IPC mocks)
-- [ ] 02-01-PLAN.md — Wave 1: SQLite schema (conversations + messages + attachments) + migration + npm packages
-- [ ] 02-02-PLAN.md — Wave 2: Rust nexusai-chat crate (streaming, providers, attachments, schema types)
-- [ ] 02-03-PLAN.md — Wave 2: Chat Zustand store + TanStack Query hooks (conversation/message CRUD)
-- [ ] 02-04-PLAN.md — Wave 3: Chat layout (two-column resizable) + ConversationList component
-- [ ] 02-05-PLAN.md — Wave 3: MessageBubble + MarkdownRenderer + MessageList with auto-scroll
-- [ ] 02-06-PLAN.md — Wave 4: MessageInput (textarea, model picker, file attach, send/stop)
-- [ ] 02-07-PLAN.md — Wave 5: Route wiring, sidebar enable, keyboard shortcuts, empty state
+- [x] 02-00-PLAN.md — Wave 1: Test scaffolds for CHAT-01 through CHAT-05 (5 test files + IPC mocks)
+- [x] 02-01-PLAN.md — Wave 1: SQLite schema (conversations + messages + attachments) + migration + npm packages
+- [x] 02-02-PLAN.md — Wave 2: Rust nexusai-chat crate (streaming, providers, attachments, schema types)
+- [x] 02-03-PLAN.md — Wave 2: Chat Zustand store + TanStack Query hooks (conversation/message CRUD)
+- [x] 02-04-PLAN.md — Wave 3: Chat layout (two-column resizable) + ConversationList component
+- [x] 02-05-PLAN.md — Wave 3: MessageBubble + MarkdownRenderer + MessageList with auto-scroll
+- [x] 02-06-PLAN.md — Wave 4: MessageInput (textarea, model picker, file attach, send/stop)
+- [x] 02-07-PLAN.md — Wave 5: Route wiring, sidebar enable, keyboard shortcuts, empty state
 - [ ] 02-08-PLAN.md — Wave 6: Human smoke test checkpoint
 **UI hint**: yes
 
