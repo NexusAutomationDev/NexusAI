@@ -1,64 +1,91 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import React from 'react';
+import { describe, it, expect } from 'vitest';
+// setup.ts handles mockIPC for plugin:sql|select etc.
 
-// These imports FAIL (module not found) until Plan 03 creates src/lib/queries/chat.ts
-// That failure is the RED state for this test file.
-import { useConversations, useSearchConversations } from '@/lib/queries/chat';
-
-// Mock the Drizzle db proxy — hooks use this, not IPC invoke()
-vi.mock('@/lib/db', () => ({
-  db: {
-    select: vi.fn().mockReturnThis(),
-    from: vi.fn().mockReturnThis(),
-    where: vi.fn().mockReturnThis(),
-    orderBy: vi.fn().mockReturnThis(),
-    limit: vi.fn().mockReturnThis(),
-    all: vi.fn().mockResolvedValue([]),
-    insert: vi.fn().mockReturnThis(),
-    values: vi.fn().mockReturnThis(),
-    returning: vi.fn().mockResolvedValue([]),
-    run: vi.fn().mockResolvedValue(undefined),
-  },
-}));
-
-function makeWrapper() {
-  const queryClient = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  return ({ children }: { children: React.ReactNode }) =>
-    React.createElement(QueryClientProvider, { client: queryClient }, children);
-}
-
-describe('CHAT-02: Conversation history and search', () => {
-  it('useConversations returns an array', async () => {
-    const { result } = renderHook(() => useConversations(), {
-      wrapper: makeWrapper(),
-    });
-    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true));
-    // With mocked db returning [], data should be an empty array
-    expect(Array.isArray(result.current.data ?? [])).toBe(true);
+describe('02-03 — TanStack Query hooks: chat-history', () => {
+  it('chatKeys query key factory is exported', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(mod.chatKeys).toBeDefined();
+    expect(Array.isArray(mod.chatKeys.all)).toBe(true);
+    expect(typeof mod.chatKeys.conversations).toBe('function');
+    expect(typeof mod.chatKeys.messages).toBe('function');
+    expect(typeof mod.chatKeys.search).toBe('function');
   });
 
-  it('useSearchConversations with empty query returns all conversations', async () => {
-    const { result } = renderHook(() => useSearchConversations(''), {
-      wrapper: makeWrapper(),
-    });
-    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true));
-    expect(Array.isArray(result.current.data ?? [])).toBe(true);
+  it('chatKeys.conversations() returns array with correct prefix', async () => {
+    const { chatKeys } = await import('../src/lib/queries/chat');
+    const key = chatKeys.conversations();
+    expect(key[0]).toBe('chat');
+    expect(key[1]).toBe('conversations');
   });
 
-  it('useSearchConversations accepts a query string without throwing', async () => {
-    const { result } = renderHook(() => useSearchConversations('test query'), {
-      wrapper: makeWrapper(),
-    });
-    await waitFor(() => expect(result.current.isSuccess || result.current.isError).toBe(true));
-    // Should not throw — returns empty array from mock
-    expect(Array.isArray(result.current.data ?? [])).toBe(true);
+  it('chatKeys.messages(id) returns array including conversationId', async () => {
+    const { chatKeys } = await import('../src/lib/queries/chat');
+    const key = chatKeys.messages('conv-abc');
+    expect(key).toContain('conv-abc');
   });
 
-  it('useSearchConversations is a function exported from queries/chat', () => {
-    expect(typeof useSearchConversations).toBe('function');
+  it('chatKeys.search(query) returns array including query', async () => {
+    const { chatKeys } = await import('../src/lib/queries/chat');
+    const key = chatKeys.search('hello');
+    expect(key).toContain('hello');
+  });
+
+  it('useConversations is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useConversations).toBe('function');
+  });
+
+  it('useMessages is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useMessages).toBe('function');
+  });
+
+  it('useSearchConversations is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useSearchConversations).toBe('function');
+  });
+
+  it('useCreateConversation is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useCreateConversation).toBe('function');
+  });
+
+  it('useInsertUserMessage is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useInsertUserMessage).toBe('function');
+  });
+
+  it('useInsertAiMessage is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useInsertAiMessage).toBe('function');
+  });
+
+  it('useDeleteConversation is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useDeleteConversation).toBe('function');
+  });
+
+  it('useUpdateConversationTitle is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useUpdateConversationTitle).toBe('function');
+  });
+
+  it('useDeleteMessage is exported and is a function', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    expect(typeof mod.useDeleteMessage).toBe('function');
+  });
+
+  it('soft-delete filter present: isNull(conversations.deletedAt) used in queries', async () => {
+    // Verify the source contains the soft-delete guard
+    const fs = await import('fs');
+    const source = fs.readFileSync('./src/lib/queries/chat.ts', 'utf-8');
+    const count = (source.match(/isNull.*deletedAt/g) || []).length;
+    expect(count).toBeGreaterThanOrEqual(2);
+  });
+
+  it('exports at least 8 named hook functions', async () => {
+    const mod = await import('../src/lib/queries/chat');
+    const hookExports = Object.keys(mod).filter(k => k.startsWith('use'));
+    expect(hookExports.length).toBeGreaterThanOrEqual(8);
   });
 });
