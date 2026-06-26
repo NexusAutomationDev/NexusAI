@@ -2,8 +2,9 @@ name: Build (Unsigned)
 
 on:
   push:
-    branches: [master, main]
-  pull_request:
+    tags:
+      - 'v*'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -58,8 +59,6 @@ jobs:
           # AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
           # AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
           # AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
-          # Updater signing (ACTIVE — required for update.json generation)
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
-          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          # Updater signing — omitted in unsigned build; active only in release.yml
         with:
           args: ${{ matrix.args }}
