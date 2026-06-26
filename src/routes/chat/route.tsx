@@ -14,11 +14,11 @@ export const Route = createFileRoute("/chat")({
 
 function ChatLayout() {
   return (
-    // h-full: fills AppShell's <main> which is already flex-1 overflow-auto
-    <div className="flex h-full">
+    // h-full w-full: fills AppShell's <main> which is already flex-1 overflow-auto
+    <div className="flex h-full w-full">
       <ResizablePanelGroup
-        orientation="horizontal"
-        className="h-full"
+        direction="horizontal"
+        className="h-full w-full"
       >
         {/* D-02: Conversation list — default ~280px, range 20%-40% of viewport */}
         <ResizablePanel defaultSize={22} minSize={18} maxSize={35}>
