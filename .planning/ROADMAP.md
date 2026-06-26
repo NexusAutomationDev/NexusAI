@@ -35,12 +35,12 @@ Decimal phases appear between their surrounding integers in numeric order.
   5. A distributable build can be produced for macOS (notarized, with correct JIT entitlements) and Windows (code-signed), and the updater keypair is backed up with documented recovery procedure
 **Plans**: 6 plans
 Plans:
-- [ ] 01-00-PLAN.md — Wave 0: Test scaffold (Vitest config + 8 requirement test files)
-- [ ] 01-01-PLAN.md — Wave 1: Tauri v2 scaffold + 7-crate Cargo workspace + SQLite WAL + Drizzle proxy
-- [ ] 01-02-PLAN.md — Wave 2: App shell layout (Sidebar, AppShell, TanStack Router, module stubs)
-- [ ] 01-03-PLAN.md — Wave 3: Settings page content (API key management + model selection)
-- [ ] 01-04-PLAN.md — Wave 4: Appearance section + Channel API streaming pattern
-- [ ] 01-05-PLAN.md — Wave 5: GitHub Actions CI pipeline + updater keypair + SIGNING.md
+- [x] 01-00-PLAN.md — Wave 0: Test scaffold (Vitest config + 8 requirement test files)
+- [x] 01-01-PLAN.md — Wave 1: Tauri v2 scaffold + 7-crate Cargo workspace + SQLite WAL + Drizzle proxy
+- [x] 01-02-PLAN.md — Wave 2: App shell layout (Sidebar, AppShell, TanStack Router, module stubs)
+- [x] 01-03-PLAN.md — Wave 3: Settings page content (API key management + model selection)
+- [x] 01-04-PLAN.md — Wave 4: Appearance section + Channel API streaming pattern
+- [x] 01-05-PLAN.md — Wave 5: GitHub Actions CI pipeline + updater keypair + SIGNING.md
 **UI hint**: yes
 
 ### Phase 2: LLM Chat
