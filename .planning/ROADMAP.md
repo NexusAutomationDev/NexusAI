@@ -53,7 +53,17 @@ Plans:
   3. User can switch the active model mid-conversation and continue without losing the conversation history
   4. User can attach a PDF, image, or document to a message and receive a response that references its content
   5. Code blocks in LLM responses render with syntax highlighting and Markdown formatting is applied throughout
-**Plans**: TBD
+**Plans**: 9 plans
+Plans:
+- [ ] 02-00-PLAN.md — Wave 1: Test scaffolds for CHAT-01 through CHAT-05 (5 test files + IPC mocks)
+- [ ] 02-01-PLAN.md — Wave 1: SQLite schema (conversations + messages + attachments) + migration + npm packages
+- [ ] 02-02-PLAN.md — Wave 2: Rust nexusai-chat crate (streaming, providers, attachments, schema types)
+- [ ] 02-03-PLAN.md — Wave 2: Chat Zustand store + TanStack Query hooks (conversation/message CRUD)
+- [ ] 02-04-PLAN.md — Wave 3: Chat layout (two-column resizable) + ConversationList component
+- [ ] 02-05-PLAN.md — Wave 3: MessageBubble + MarkdownRenderer + MessageList with auto-scroll
+- [ ] 02-06-PLAN.md — Wave 4: MessageInput (textarea, model picker, file attach, send/stop)
+- [ ] 02-07-PLAN.md — Wave 5: Route wiring, sidebar enable, keyboard shortcuts, empty state
+- [ ] 02-08-PLAN.md — Wave 6: Human smoke test checkpoint
 **UI hint**: yes
 
 ### Phase 3: Knowledge Base + RAG
@@ -134,7 +144,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/6 | Planned | - |
-| 2. LLM Chat | 0/TBD | Not started | - |
+| 2. LLM Chat | 0/9 | Planned | - |
 | 3. Knowledge Base + RAG | 0/TBD | Not started | - |
 | 4. LLM Benchmarking | 0/TBD | Not started | - |
 | 5. Gmail + Calendar | 0/TBD | Not started | - |
@@ -156,4 +166,4 @@ Recommendation: Add DASH-01 to formalize coverage. This can be done during Phase
 
 ---
 
-*Generated: 2026-06-25 | Phase 1 planned: 2026-06-25*
+*Generated: 2026-06-25 | Phase 1 planned: 2026-06-25 | Phase 2 planned: 2026-06-26*
