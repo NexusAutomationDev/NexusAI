@@ -339,7 +339,6 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "py-2"
           )}
-          style={{ maxHeight: "200px" }}
         />
 
         {/* D-20: Model picker — dropdown showing current model */}
