@@ -22,7 +22,7 @@ pub struct ApiKeyStatus {
 // Inner module isolates the #[tauri::command] + #[specta::specta] macros to avoid
 // rustc 1.96 symbol collision when both macros generate `use` re-exports in the same scope.
 // See: tauri-macros 2.6.x + specta-macros 2.0.0-rc.25 incompatibility on rustc 1.96.
-mod commands {
+pub mod commands {
     use super::*;
     use keyring::Entry;
 
