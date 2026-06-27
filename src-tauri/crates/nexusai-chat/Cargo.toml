@@ -11,7 +11,7 @@ tokio = { workspace = true }
 async-openai = "0.27"
 reqwest = { version = "0.12", features = ["json", "stream"] }
 base64 = "0.22"
-keyring = { version = "3", features = ["sync-secret-service"] }
+keyring = { version = "3", features = ["windows-native", "apple-native", "sync-secret-service"] }
 nexusai-settings = { path = "../nexusai-settings" }
 tauri-specta = { version = "=2.0.0-rc.25", features = ["derive", "typescript"] }
 specta = { version = "=2.0.0-rc.25" }

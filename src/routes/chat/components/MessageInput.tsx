@@ -164,16 +164,20 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
     clearAttachments();
 
     // 2. Build full conversation history for the API call (D-23)
+    // Use null (not undefined) for absent attachments — matches Rust Option<Vec<T>>.
+    // Filter guards against Drizzle proxy returning messages with undefined role at runtime.
     const allMessages = [
-      ...existingMessages.map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-        attachments: undefined,
-      })),
+      ...existingMessages
+        .filter((m) => m.role === "user" || m.role === "assistant")
+        .map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+          attachments: null as null,
+        })),
       {
         role: "user" as const,
         content: text,
-        attachments: attachmentsToSend.length > 0 ? attachmentsToSend : undefined,
+        attachments: attachmentsToSend.length > 0 ? attachmentsToSend : null,
       },
     ];
 
