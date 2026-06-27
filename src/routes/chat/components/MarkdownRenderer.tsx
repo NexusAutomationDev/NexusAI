@@ -15,23 +15,36 @@
  */
 
 import { memo, useState } from "react";
+import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 
+// Extract plain text from React children recursively (for clipboard copy).
+// rehype-highlight wraps code tokens in <span> elements, so we can't use String(children).
+function extractText(node: ReactNode): string {
+  if (typeof node === "string" || typeof node === "number") return String(node);
+  if (Array.isArray(node)) return node.map(extractText).join("");
+  if (node !== null && typeof node === "object" && "props" in node) {
+    return extractText((node as React.ReactElement).props.children);
+  }
+  return "";
+}
+
 interface CodeBlockProps {
   language?: string;
-  code: string;
+  rawText: string;      // plain text for the clipboard button
+  children: ReactNode;  // highlighted React nodes for visual display
 }
 
 // D-11: Code block with copy button (hover) + language badge (top-right)
 // UI-SPEC: "Copiar" on hover, "Copiado!" active state, 2s timeout
-function CodeBlock({ language, code }: CodeBlockProps) {
+function CodeBlock({ language, rawText, children }: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(rawText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000); // UI-SPEC: 2s timeout
   };
@@ -63,8 +76,8 @@ function CodeBlock({ language, code }: CodeBlockProps) {
         </button>
       </div>
       {/* Code content: 13px monospace, 1.6 line-height per UI-SPEC */}
-      <pre className="overflow-x-auto p-4 bg-muted">
-        <code className="text-[13px] leading-relaxed font-mono">{code}</code>
+      <pre className="overflow-x-auto p-4 bg-muted/50">
+        <code className="text-[13px] leading-relaxed font-mono">{children}</code>
       </pre>
     </div>
   );
@@ -96,17 +109,22 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
           // Custom code renderer — distinguishes inline code from code blocks
           code({ node, className, children, ...props }) {
             const match = /language-(\w+)/.exec(className || "");
+            // rehype-highlight wraps tokens in <span> elements, so children is
+            // already a React tree — use extractText() for raw clipboard content.
+            const rawText = extractText(children).replace(/\n$/, "");
             const isBlock =
               (node?.position?.start?.line !== node?.position?.end?.line) ||
-              String(children).includes("\n");
+              rawText.includes("\n");
 
             if (isBlock || match) {
               // Code block (D-10: rehype-highlight adds language-* className)
               return (
                 <CodeBlock
                   language={match?.[1]}
-                  code={String(children).replace(/\n$/, "")}
-                />
+                  rawText={rawText}
+                >
+                  {children}
+                </CodeBlock>
               );
             }
 
