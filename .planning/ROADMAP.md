@@ -76,7 +76,16 @@ Plans:
   3. User can paste a URL and have its content scraped, indexed, and available for LLM questions within one minute
   4. User can browse all knowledge base items (files, notes, URLs) in a file-explorer-style view and see their indexed status
   5. Embeddings for all indexed content are computed locally with no external API call — app functions in offline mode for KB queries against already-indexed content
-**Plans**: TBD
+**Plans**: 8 plans
+Plans:
+- [ ] 03-00-PLAN.md — Wave 1: Deps + KB schema/migration + Wave 0 RED tests & fixtures
+- [ ] 03-01-PLAN.md — Wave 2: Rust ingest (file/URL parse) + chunking + IPC types
+- [ ] 03-02-PLAN.md — Wave 2: Rust embeddings (fastembed E5) + sqlite-vec + FTS5/RRF search
+- [ ] 03-03-PLAN.md — Wave 3: KB Tauri commands + progress + store + app registration
+- [ ] 03-04-PLAN.md — Wave 4: indexingStore + KB queries + browser (tree/table/dropzone)
+- [ ] 03-05-PLAN.md — Wave 5: CodeMirror notes editor + /kb two-pane route + sidebar enable
+- [ ] 03-06-PLAN.md — Wave 4: Chat RAG — KB-scope selector + citations ([n] + source cards)
+- [ ] 03-07-PLAN.md — Wave 6: Human smoke test checkpoint
 **UI hint**: yes
 
 ### Phase 4: LLM Benchmarking
@@ -145,7 +154,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Foundation | 0/6 | Planned | - |
 | 2. LLM Chat | 0/9 | Planned | - |
-| 3. Knowledge Base + RAG | 0/TBD | Not started | - |
+| 3. Knowledge Base + RAG | 0/8 | Planned | - |
 | 4. LLM Benchmarking | 0/TBD | Not started | - |
 | 5. Gmail + Calendar | 0/TBD | Not started | - |
 | 6. MCP Management | 0/TBD | Not started | - |
