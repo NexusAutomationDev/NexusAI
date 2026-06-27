@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-03-PLAN.md
-last_updated: "2026-06-27T03:50:17.045Z"
+stopped_at: Completed 03-06-PLAN.md
+last_updated: "2026-06-27T04:01:52.009Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 8
   completed_phases: 2
   total_plans: 23
-  completed_plans: 19
+  completed_plans: 20
   percent: 25
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 03 (knowledge-base-rag) — EXECUTING
-Plan: 5 of 8
+Plan: 6 of 8
 Status: Ready to execute
 Last activity: 2026-06-27
 
@@ -57,6 +57,7 @@ Progress: [██░░░░░░░░] 25%
 | Phase 03 P01 | 5min | 3 tasks | 4 files |
 | Phase 03 P02 | 11 | 3 tasks | 3 files |
 | Phase 03 P03 | 11min | 3 tasks | 6 files |
+| Phase 03 P06 | 8min | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -74,6 +75,7 @@ Recent decisions affecting current work:
 - [Phase 03]: Retrieval engine: sqlite-vec isolated in vector.rs (D-16), fastembed E5 384-dim local embeddings, FTS5 BM25 + RRF k=60 hybrid search
 - [Phase 03]: fastembed 5.17 embed() takes &mut self; embed helpers use &mut + Arc<Mutex<TextEmbedding>> singleton; use TextInitOptions not deprecated InitOptions
 - [Phase 03]: KB integration: six Tauri commands wire ingest/query/reindex; sqlite-vec registered at startup; bindings exported via headless export-bindings bin
+- [Phase 03]: RAG chat (03-06): citations persisted via HTML-comment sentinel in message.content (no DB migration); grounded send injects citation prompt into existing stream; source cards driven by retriever array (D-06 fallback)
 
 ### Pending Todos
 
@@ -89,6 +91,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-27T03:50:17.038Z
-Stopped at: Completed 03-03-PLAN.md
+Last session: 2026-06-27T04:01:35.827Z
+Stopped at: Completed 03-06-PLAN.md
 Resume file: None
