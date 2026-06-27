@@ -24,6 +24,11 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { MarkdownRenderer } from "./MarkdownRenderer";
+import {
+  splitCitations,
+  buildCitationMap,
+  kindLabel,
+} from "@/lib/kb/citations";
 import type { Message } from "@/lib/db/schema";
 
 interface MessageBubbleProps {
@@ -71,8 +76,14 @@ export function MessageBubble({
   const isAi = message.role === "assistant";
 
   // Content to render: streaming content takes precedence during stream
-  const displayContent =
+  const rawContent =
     isStreaming && streamingContent ? streamingContent : message.content;
+  // D-04/D-06: grounded assistant messages persist their retrieved chunks via a sentinel.
+  // Split the visible answer body from the citations so source cards render below it.
+  const { body: displayContent, citations } = isAi
+    ? splitCitations(rawContent)
+    : { body: rawContent, citations: [] };
+  const citationMap = citations.length > 0 ? buildCitationMap(citations) : undefined;
   // D-26: Show typing indicator while streaming but no tokens have arrived yet
   const showTypingIndicator = isAi && isStreaming && !streamingContent;
 
@@ -149,13 +160,56 @@ export function MessageBubble({
               </div>
             </div>
           ) : isAi ? (
-            // AI messages: rendered with MarkdownRenderer (D-10, D-12)
-            <MarkdownRenderer content={displayContent} />
+            // AI messages: rendered with MarkdownRenderer (D-10, D-12).
+            // citationMap (when present) turns inline [n] into clickable source links (D-04).
+            <MarkdownRenderer content={displayContent} citationMap={citationMap} />
           ) : (
             // User messages: plain text (no markdown processing — D-08)
             <p className="whitespace-pre-wrap">{displayContent}</p>
           )}
         </div>
+
+        {/* D-04/D-06: Source cards for grounded answers. Driven by the retriever's
+            citations array (always correct, model-independent) — so cards render whenever
+            citations exist, even if no inline [n] markers were emitted (D-06 cards-only
+            fallback). Ungrounded messages render nothing here. */}
+        {isAi && !isStreaming && citations.length > 0 && (
+          <div className="mt-3">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Fontes</p>
+            <div className="flex flex-col gap-2">
+              {citations.map((c, i) => {
+                const n = i + 1;
+                const meta = [kindLabel(c.kind), c.section]
+                  .filter(Boolean)
+                  .join(" · ");
+                return (
+                  <div
+                    key={c.id}
+                    data-citation-card={n}
+                    className="rounded-md bg-secondary border border-border p-3 transition-shadow"
+                  >
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-xs font-medium text-accent shrink-0">
+                        [{n}]
+                      </span>
+                      <span className="text-sm font-medium text-foreground">
+                        {c.itemTitle}
+                      </span>
+                      {meta && (
+                        <span className="text-xs font-normal text-muted-foreground">
+                          · {meta}
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-1 text-xs text-muted-foreground line-clamp-3">
+                      {c.snippet}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* D-24: Message actions — visible on hover (not during streaming) */}
         {!isStreaming && !isEditing && (

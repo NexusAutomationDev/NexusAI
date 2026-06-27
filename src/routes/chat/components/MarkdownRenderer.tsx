@@ -14,12 +14,13 @@
  * All markdown element styles are provided via custom component overrides.
  */
 
-import { memo, useState } from "react";
+import { memo, useState, Fragment } from "react";
 import type { ReactNode } from "react";
 import ReactMarkdown from "react-markdown";
 import rehypeHighlight from "rehype-highlight";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
+import type { Citation } from "@/lib/kb/citations";
 
 // Extract plain text from React children recursively (for clipboard copy).
 // rehype-highlight wraps code tokens in <span> elements, so we can't use String(children).
@@ -27,7 +28,8 @@ function extractText(node: ReactNode): string {
   if (typeof node === "string" || typeof node === "number") return String(node);
   if (Array.isArray(node)) return node.map(extractText).join("");
   if (node !== null && typeof node === "object" && "props" in node) {
-    return extractText((node as React.ReactElement).props.children);
+    const props = (node as React.ReactElement<{ children?: ReactNode }>).props;
+    return extractText(props.children);
   }
   return "";
 }
@@ -83,8 +85,103 @@ function CodeBlock({ language, rawText, children }: CodeBlockProps) {
   );
 }
 
+// D-04: Render inline [n] citation markers as clickable accent superscript buttons.
+// Each marker is a real button (keyboard-activatable, role/aria-label "Fonte {n}") that
+// resolves n against the per-message citation map and scrolls to / highlights the matching
+// source card. If no citation map is present (ungrounded message) or n has no entry, [n]
+// renders as plain text — never wrapped.
+const CITATION_RE = /\[(\d+)\]/g;
+
+function CitationMarkers({
+  text,
+  citationMap,
+}: {
+  text: string;
+  citationMap?: Map<number, Citation>;
+}): ReactNode {
+  if (!citationMap || citationMap.size === 0) return text;
+
+  const parts: ReactNode[] = [];
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  // Reset lastIndex defensively (module-level regex with /g is stateful).
+  CITATION_RE.lastIndex = 0;
+
+  while ((match = CITATION_RE.exec(text)) !== null) {
+    const n = Number(match[1]);
+    const citation = citationMap.get(n);
+    if (!citation) continue; // unknown marker → leave as plain text
+
+    if (match.index > lastIndex) {
+      parts.push(text.slice(lastIndex, match.index));
+    }
+
+    parts.push(
+      <sup key={`cite-${match.index}-${n}`} className="ml-0.5">
+        <button
+          type="button"
+          role="link"
+          aria-label={`Fonte ${n}`}
+          data-citation-target={n}
+          onClick={() => {
+            const card = document.querySelector(
+              `[data-citation-card="${n}"]`,
+            ) as HTMLElement | null;
+            card?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+            if (card) {
+              card.classList.add("ring-2", "ring-accent");
+              setTimeout(
+                () => card.classList.remove("ring-2", "ring-accent"),
+                1500,
+              );
+            }
+          }}
+          className={cn(
+            "text-xs font-medium text-accent align-super",
+            "cursor-pointer hover:underline",
+            "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring rounded-sm",
+          )}
+        >
+          [{n}]
+        </button>
+      </sup>,
+    );
+    lastIndex = match.index + match[0].length;
+  }
+
+  if (parts.length === 0) return text; // no resolvable markers
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+
+  return (
+    <>
+      {parts.map((p, i) => (
+        <Fragment key={i}>{p}</Fragment>
+      ))}
+    </>
+  );
+}
+
+// Recursively process React children, wrapping [n] markers in string leaves.
+function renderWithCitations(
+  children: ReactNode,
+  citationMap?: Map<number, Citation>,
+): ReactNode {
+  if (!citationMap || citationMap.size === 0) return children;
+  if (typeof children === "string") {
+    return <CitationMarkers text={children} citationMap={citationMap} />;
+  }
+  if (Array.isArray(children)) {
+    return children.map((c, i) => (
+      <Fragment key={i}>{renderWithCitations(c, citationMap)}</Fragment>
+    ));
+  }
+  return children;
+}
+
 interface MarkdownRendererProps {
   content: string;
+  /** Per-message citation map; when present, inline [n] markers become source links (D-04). */
+  citationMap?: Map<number, Citation>;
 }
 
 /**
@@ -97,6 +194,7 @@ interface MarkdownRendererProps {
  */
 export const MarkdownRenderer = memo(function MarkdownRenderer({
   content,
+  citationMap,
 }: MarkdownRendererProps) {
   return (
     // Non-prose fallback: custom component overrides handle all element styling.
@@ -150,9 +248,16 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
             <h3 className="text-base font-medium mt-2 mb-1">{children}</h3>
           ),
 
-          // Paragraph spacing
+          // Paragraph spacing — [n] citation markers wrapped here (D-04)
           p: ({ children }) => (
-            <p className="mb-2 last:mb-0">{children}</p>
+            <p className="mb-2 last:mb-0">
+              {renderWithCitations(children, citationMap)}
+            </p>
+          ),
+
+          // List item — also a common host for [n] markers
+          li: ({ children }) => (
+            <li>{renderWithCitations(children, citationMap)}</li>
           ),
 
           // Lists
