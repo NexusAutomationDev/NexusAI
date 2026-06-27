@@ -49,6 +49,12 @@ interface ChatStore {
   currentModel: string;
   setCurrentModel: (model: string) => void;
 
+  // Per-message KB grounding (D-03, D-04 — Plan 03-06).
+  // When on, the next send runs hybrid retrieval and injects a citation prompt.
+  // Grounding is per-message: a conversation can mix grounded + ungrounded sends.
+  kbScope: boolean;
+  setKbScope: (on: boolean) => void;
+
   // Streaming state (D-14, D-26)
   isStreaming: boolean;
   streamingContent: string;           // Accumulated token text during stream
@@ -75,6 +81,10 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   // Default to settings store chatModel (D-22: continuity)
   currentModel: useSettingsStore.getState().chatModel,
   setCurrentModel: (model) => set({ currentModel: model }),
+
+  // KB grounding off by default (opt-in per message, D-03)
+  kbScope: false,
+  setKbScope: (on) => set({ kbScope: on }),
 
   isStreaming: false,
   streamingContent: '',
