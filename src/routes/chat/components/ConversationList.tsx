@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { format, isToday, isYesterday, isWithinInterval, subDays, isValid } from "date-fns";
 import { Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -80,6 +81,7 @@ export function ConversationList() {
   // D-28: focusedIndex tracks which conversation is keyboard-focused (ArrowUp/Down)
   const [focusedIndex, setFocusedIndex] = useState<number>(-1);
 
+  const navigate = useNavigate();
   const { activeConversationId, setActiveConversationId } = useChatStore();
   const { data: conversations = [], isLoading } =
     useSearchConversations(searchQuery);
@@ -129,12 +131,14 @@ export function ConversationList() {
   const handleNewChat = async () => {
     const conv = await createConversation();
     setActiveConversationId(conv.id);
+    navigate({ to: '/chat' });
   };
 
   const handleSelectConversation = (conv: Conversation) => {
     const idx = flatConversations.findIndex((c) => c.id === conv.id);
     setFocusedIndex(idx);
     setActiveConversationId(conv.id);
+    navigate({ to: '/chat' });
   };
 
   const handleDeleteConfirm = async () => {
