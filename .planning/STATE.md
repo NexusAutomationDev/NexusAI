@@ -4,7 +4,7 @@ milestone: v1.0
 milestone_name: milestone
 status: executing
 stopped_at: Completed 03-02-PLAN.md
-last_updated: "2026-06-27T03:34:47.193Z"
+last_updated: "2026-06-27T03:35:02.501Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 8
@@ -70,6 +70,8 @@ Recent decisions affecting current work:
 - [Phase 03]: Pinned sqlite-vec=0.1.9 (0.1.10-alpha.4 build is broken — missing diskann source)
 - [Phase 03]: dom_smoothie 0.18 ingest: Readability::new(html, None, None).parse(); text_content is StrTendril (.to_string())
 - [Phase 03]: docx-rust 0.1.11 ingest: iterate document.body.content BodyContent::Paragraph, join para.text() with blank lines for paragraph-aware chunking
+- [Phase 03]: Retrieval engine: sqlite-vec isolated in vector.rs (D-16), fastembed E5 384-dim local embeddings, FTS5 BM25 + RRF k=60 hybrid search
+- [Phase 03]: fastembed 5.17 embed() takes &mut self; embed helpers use &mut + Arc<Mutex<TextEmbedding>> singleton; use TextInitOptions not deprecated InitOptions
 
 ### Pending Todos
 
