@@ -79,8 +79,8 @@ Plans:
 **Plans**: 8 plans
 Plans:
 - [x] 03-00-PLAN.md — Wave 1: Deps + KB schema/migration + Wave 0 RED tests & fixtures
-- [ ] 03-01-PLAN.md — Wave 2: Rust ingest (file/URL parse) + chunking + IPC types
-- [ ] 03-02-PLAN.md — Wave 2: Rust embeddings (fastembed E5) + sqlite-vec + FTS5/RRF search
+- [x] 03-01-PLAN.md — Wave 2: Rust ingest (file/URL parse) + chunking + IPC types
+- [x] 03-02-PLAN.md — Wave 2: Rust embeddings (fastembed E5) + sqlite-vec + FTS5/RRF search
 - [ ] 03-03-PLAN.md — Wave 3: KB Tauri commands + progress + store + app registration
 - [ ] 03-04-PLAN.md — Wave 4: indexingStore + KB queries + browser (tree/table/dropzone)
 - [ ] 03-05-PLAN.md — Wave 5: CodeMirror notes editor + /kb two-pane route + sidebar enable

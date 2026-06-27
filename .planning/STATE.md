@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-00-PLAN.md
-last_updated: "2026-06-27T03:22:30.936Z"
+stopped_at: Completed 03-02-PLAN.md
+last_updated: "2026-06-27T03:34:47.193Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 8
   completed_phases: 2
   total_plans: 23
-  completed_plans: 16
+  completed_plans: 18
   percent: 25
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 03 (knowledge-base-rag) — EXECUTING
-Plan: 2 of 8
+Plan: 4 of 8
 Status: Ready to execute
 Last activity: 2026-06-27
 
@@ -54,6 +54,8 @@ Progress: [██░░░░░░░░] 25%
 
 *Updated after each plan completion*
 | Phase 03 P00 | 10 | 3 tasks | 19 files |
+| Phase 03 P01 | 5min | 3 tasks | 4 files |
+| Phase 03 P02 | 11 | 3 tasks | 3 files |
 
 ## Accumulated Context
 
@@ -66,6 +68,8 @@ Recent decisions affecting current work:
 - Roadmap: sqlite-vec confirmed for vector search — isolate behind single Rust module to absorb API changes (alpha library)
 - Roadmap: Phase 6 (MCP) depends on Phase 1 only, not Phase 3 or 5 — agents (Phase 7) pull both dependencies together
 - [Phase 03]: Pinned sqlite-vec=0.1.9 (0.1.10-alpha.4 build is broken — missing diskann source)
+- [Phase 03]: dom_smoothie 0.18 ingest: Readability::new(html, None, None).parse(); text_content is StrTendril (.to_string())
+- [Phase 03]: docx-rust 0.1.11 ingest: iterate document.body.content BodyContent::Paragraph, join para.text() with blank lines for paragraph-aware chunking
 
 ### Pending Todos
 
@@ -81,6 +85,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-27T03:22:20.564Z
-Stopped at: Completed 03-00-PLAN.md
+Last session: 2026-06-27T03:34:47.187Z
+Stopped at: Completed 03-02-PLAN.md
 Resume file: None
