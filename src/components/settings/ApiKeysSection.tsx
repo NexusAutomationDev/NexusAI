@@ -5,6 +5,7 @@ import { Input } from '../ui/input';
 import { Label } from '../ui/label';
 import { Badge } from '../ui/badge';
 import { Separator } from '../ui/separator';
+import { useSettingsStore } from '@/lib/stores/settings';
 
 interface Provider {
   id: 'openai' | 'openrouter' | 'gemini';
@@ -66,6 +67,7 @@ function useApiKeyState(providerId: string): KeyState & {
       try {
         await invoke('set_api_key', { provider: providerId, key: state.inputValue.trim() });
         setState((s) => ({ ...s, editing: false, inputValue: '', configured: true, error: null }));
+        useSettingsStore.getState().refreshAvailableModels();
       } catch (e) {
         setState((s) => ({ ...s, error: 'Não foi possível salvar a chave. Verifique e tente novamente.' }));
       }
@@ -76,6 +78,7 @@ function useApiKeyState(providerId: string): KeyState & {
       try {
         await invoke('delete_api_key', { provider: providerId });
         setState((s) => ({ ...s, configured: false, confirmDelete: false, error: null }));
+        useSettingsStore.getState().refreshAvailableModels();
       } catch (e) {
         setState((s) => ({ ...s, error: String(e), confirmDelete: false }));
       }

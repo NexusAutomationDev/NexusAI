@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/lib/stores/chat";
-import { useSettingsStore, useAvailableModels, type ProviderId } from "@/lib/stores/settings";
+import { useSettingsStore, PROVIDER_LABELS, type ProviderId } from "@/lib/stores/settings";
 import {
   useInsertUserMessage,
   useInsertAiMessage,
@@ -80,7 +80,9 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
 
   // D-22: Default to last model used in conversation (via settings.chatModel fallback)
   const chatModel = useSettingsStore((s) => s.chatModel);
-  const availableModels = useAvailableModels();
+  // availableModels is pre-computed in the store (refreshed on load + after key changes)
+  // — reading from store avoids invoke() calls inside this component on every render
+  const availableModels = useSettingsStore((s) => s.availableModels);
 
   // Group available models by provider for the Select dropdown
   const modelsByProvider = availableModels.reduce<Record<ProviderId, typeof availableModels>>((acc, m) => {
@@ -88,12 +90,6 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
     acc[m.provider].push(m);
     return acc;
   }, {} as Record<ProviderId, typeof availableModels>);
-
-  const PROVIDER_LABELS: Record<ProviderId, string> = {
-    openai: 'OpenAI',
-    openrouter: 'OpenRouter',
-    gemini: 'Google Gemini',
-  };
 
   useEffect(() => {
     if (!currentModel) setCurrentModel(chatModel);
