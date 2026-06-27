@@ -11,7 +11,7 @@ import * as React from 'react';
 import { open } from '@tauri-apps/plugin-dialog';
 import { getCurrentWebviewWindow } from '@tauri-apps/api/webviewWindow';
 import { toast } from 'sonner';
-import { FileText, FolderOpen } from 'lucide-react';
+import { FileText, FolderOpen, StickyNote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
@@ -23,7 +23,14 @@ function basename(path: string): string {
   return parts[parts.length - 1] || path;
 }
 
-export function ImportDropzone() {
+export interface ImportDropzoneProps {
+  /** Compact toolbar variant — rendered above the items table so knowledge can be added anytime. */
+  compact?: boolean;
+  /** Open a blank note in the editor (persisted on first save). */
+  onCreateNote?: () => void;
+}
+
+export function ImportDropzone({ compact = false, onCreateNote }: ImportDropzoneProps = {}) {
   const [isDragOver, setIsDragOver] = React.useState(false);
   const [url, setUrl] = React.useState('');
   const importFiles = useImportFiles();
@@ -76,6 +83,47 @@ export function ImportDropzone() {
     setUrl('');
   };
 
+  // Compact toolbar: persistent "add knowledge" bar shown above the items table.
+  if (compact) {
+    return (
+      <div
+        className={cn(
+          'flex flex-wrap items-center gap-2 border-b border-border px-4 py-2 transition-colors',
+          isDragOver && 'bg-accent/5'
+        )}
+      >
+        <Button size="sm" onClick={handleChooseFiles} disabled={importFiles.isPending}>
+          <FolderOpen size={14} className="mr-1" />
+          Adicionar arquivos
+        </Button>
+        {onCreateNote && (
+          <Button size="sm" variant="outline" onClick={onCreateNote}>
+            <StickyNote size={14} className="mr-1" />
+            Nova nota
+          </Button>
+        )}
+        <div className="flex min-w-[16rem] flex-1 items-center gap-2">
+          <Input
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') handleAddUrl();
+            }}
+            placeholder="Cole uma URL para indexar..."
+            aria-label="URL para indexar"
+            className="h-8"
+          />
+          <Button size="sm" variant="default" onClick={handleAddUrl} disabled={addUrl.isPending}>
+            Adicionar
+          </Button>
+        </div>
+        <span className="text-xs text-muted-foreground">
+          {isDragOver ? 'Solte para indexar...' : 'ou arraste arquivos aqui'}
+        </span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-full flex-col items-center justify-center gap-4 p-12">
       <FileText size={32} className="text-muted-foreground" aria-hidden="true" />
@@ -95,10 +143,18 @@ export function ImportDropzone() {
         Arraste PDF, Markdown, DOCX ou TXT aqui
       </div>
 
-      <Button onClick={handleChooseFiles} disabled={importFiles.isPending}>
-        <FolderOpen size={16} className="mr-1" />
-        Escolher arquivos
-      </Button>
+      <div className="flex items-center gap-2">
+        <Button onClick={handleChooseFiles} disabled={importFiles.isPending}>
+          <FolderOpen size={16} className="mr-1" />
+          Escolher arquivos
+        </Button>
+        {onCreateNote && (
+          <Button variant="outline" onClick={onCreateNote}>
+            <StickyNote size={16} className="mr-1" />
+            Nova nota
+          </Button>
+        )}
+      </div>
 
       {/* URL paste */}
       <div className="flex w-full max-w-md items-center gap-2">

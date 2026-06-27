@@ -110,9 +110,12 @@ function KbBrowser() {
     errorReason: i.errorReason,
   }));
 
-  // Empty KB → full-pane import affordance (D-13).
-  if (!isLoading && items.length === 0) {
-    return <ImportDropzone />;
+  // Open a blank note in the editor; the row + file are persisted on first save.
+  const handleCreateNote = () => setSelectedNoteId(crypto.randomUUID());
+
+  // Empty KB → full-pane import affordance (D-13), now also able to seed the first note.
+  if (!isLoading && items.length === 0 && !selectedNoteId) {
+    return <ImportDropzone onCreateNote={handleCreateNote} />;
   }
 
   return (
@@ -120,7 +123,7 @@ function KbBrowser() {
       <ResizablePanel defaultSize={25} minSize={20} maxSize={40}>
         <ScrollArea className="h-full">
           {/* Selecting a note opens it in the right pane editor (D-09). */}
-          <FolderTree onSelectNote={setSelectedNoteId} />
+          <FolderTree onSelectNote={setSelectedNoteId} onCreateNote={handleCreateNote} />
         </ScrollArea>
       </ResizablePanel>
       <ResizableHandle withHandle />
@@ -129,14 +132,18 @@ function KbBrowser() {
           // Editor opens in place of the table when a note is selected (UI-SPEC §Layout).
           <NotePane noteId={selectedNoteId} onClose={() => setSelectedNoteId(null)} />
         ) : (
-          <ScrollArea className="h-full">
-            <ItemsTable
-              items={rows}
-              onReindex={(id) => reindex.mutate(id)}
-              onDelete={(id) => deleteItem.mutate(id)}
-              reindexPending={reindex.isPending}
-            />
-          </ScrollArea>
+          <div className="flex h-full flex-col">
+            {/* Persistent add-knowledge toolbar so files/URLs can be added anytime (not just empty state). */}
+            <ImportDropzone compact onCreateNote={handleCreateNote} />
+            <ScrollArea className="min-h-0 flex-1">
+              <ItemsTable
+                items={rows}
+                onReindex={(id) => reindex.mutate(id)}
+                onDelete={(id) => deleteItem.mutate(id)}
+                reindexPending={reindex.isPending}
+              />
+            </ScrollArea>
+          </div>
         )}
       </ResizablePanel>
     </ResizablePanelGroup>

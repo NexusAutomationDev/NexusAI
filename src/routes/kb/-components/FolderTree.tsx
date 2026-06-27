@@ -7,7 +7,8 @@
 
 import * as React from 'react';
 import { Tree, type NodeRendererProps } from 'react-arborist';
-import { ChevronRight, ChevronDown, Folder, StickyNote } from 'lucide-react';
+import { ChevronRight, ChevronDown, Folder, StickyNote, Plus } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useKbFolders, useKbItems } from '@/lib/queries/kb';
 import type { KbFolder, KbItem } from '@/lib/db/schema';
@@ -51,9 +52,11 @@ function buildTree(folders: KbFolder[], notes: KbItem[]): TreeNode[] {
 export interface FolderTreeProps {
   onSelectNote?: (id: string) => void;
   onSelectFolder?: (id: string | null) => void;
+  /** Open a blank note in the editor (persisted on first save). */
+  onCreateNote?: () => void;
 }
 
-export function FolderTree({ onSelectNote, onSelectFolder }: FolderTreeProps) {
+export function FolderTree({ onSelectNote, onSelectFolder, onCreateNote }: FolderTreeProps) {
   const { data: folders = [] } = useKbFolders();
   const { data: items = [] } = useKbItems();
 
@@ -63,7 +66,21 @@ export function FolderTree({ onSelectNote, onSelectFolder }: FolderTreeProps) {
 
   return (
     <div className="flex h-full flex-col gap-1 p-4">
-      <h2 className="text-sm font-medium">Notas e pastas</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-medium">Notas e pastas</h2>
+        {onCreateNote && (
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-7 px-2"
+            onClick={onCreateNote}
+            aria-label="Nova nota"
+          >
+            <Plus size={14} className="mr-1" />
+            Nova nota
+          </Button>
+        )}
+      </div>
       <div className="flex-1">
         <Tree<TreeNode>
           data={data}
