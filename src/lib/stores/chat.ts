@@ -28,10 +28,12 @@ export interface FileAttachment {
 }
 
 // ChatMessage sent to stream_chat (full history for D-23)
+// attachments uses `| null` (not just optional) to match the Rust Option<Vec<T>>
+// serde shape — absent attachments are sent as null, not undefined.
 export interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
-  attachments?: FileAttachment[];
+  attachments?: FileAttachment[] | null;
 }
 
 export interface StreamChatInput {

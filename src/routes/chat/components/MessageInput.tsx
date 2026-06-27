@@ -17,7 +17,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import TextareaAutosize from "react-textarea-autosize";
-import { Send, Square, Paperclip, AlertCircle } from "lucide-react";
+import { Send, Square, Paperclip, AlertCircle, BookOpen } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Select,
@@ -46,6 +46,12 @@ import {
 import { FileAttachmentPreview } from "./FileAttachmentPreview";
 import type { NewMessage } from "@/lib/db/schema";
 import type { FileAttachment } from "@/lib/stores/chat";
+import {
+  retrieveForQuery,
+  buildCitationPrompt,
+  embedCitations,
+  type Citation,
+} from "@/lib/kb/citations";
 
 interface MessageInputProps {
   conversationId: string;
@@ -64,6 +70,8 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
     isStreaming,
     currentModel,
     setCurrentModel,
+    kbScope,
+    setKbScope,
     pendingAttachments,
     addAttachment,
     removeAttachment,
@@ -129,10 +137,7 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
       unlisten = await webviewWindow.onDragDropEvent(async (event) => {
         if (event.payload.type === "over") {
           setIsDragOver(true);
-        } else if (
-          event.payload.type === "leave" ||
-          event.payload.type === "cancel"
-        ) {
+        } else if (event.payload.type === "leave") {
           setIsDragOver(false);
         } else if (event.payload.type === "drop") {
           setIsDragOver(false);
@@ -183,7 +188,26 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
     const attachmentsToSend = [...pendingAttachments];
     clearAttachments();
 
-    // 2. Build full conversation history for the API call (D-23)
+    // 2a. KB grounding (D-03/D-04) — per-message: when "Usar KB" is on, run hybrid
+    // retrieval, prepend a citation prompt as a grounding preamble, and persist the
+    // retrieved chunks with the assistant answer (D-06: cards are driven by this array,
+    // independent of whether the model emits [n] markers).
+    const grounded = kbScope;
+    let retrievedChunks: Citation[] = [];
+    let groundingPreamble: string | null = null;
+    if (grounded) {
+      try {
+        retrievedChunks = await retrieveForQuery(text);
+        groundingPreamble = buildCitationPrompt(retrievedChunks);
+      } catch (err) {
+        // Retrieval failure is non-fatal — fall back to an ungrounded send (D-25 inline error).
+        setError(formatError(String(err)));
+        retrievedChunks = [];
+        groundingPreamble = null;
+      }
+    }
+
+    // 2b. Build full conversation history for the API call (D-23)
     // Use null (not undefined) for absent attachments — matches Rust Option<Vec<T>>.
     // Filter guards against Drizzle proxy returning messages with undefined role at runtime.
     const allMessages = [
@@ -192,11 +216,15 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
         .map((m) => ({
           role: m.role as "user" | "assistant",
           content: m.content,
-          attachments: null as null,
+          attachments: null as FileAttachment[] | null,
         })),
+      // Grounded send: inject the citation prompt + the user's question as a single
+      // user turn so the existing stream pipeline (D-01) answers from the KB.
       {
         role: "user" as const,
-        content: text,
+        content: groundingPreamble
+          ? `${groundingPreamble}\n\nPergunta: ${text}`
+          : text,
         attachments: attachmentsToSend.length > 0 ? attachmentsToSend : null,
       },
     ];
@@ -217,11 +245,16 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
       async () => {
         // Stream done — save AI message (D-32)
         // useInsertAiMessage requires _conversationModel to update conversation.lastModel (D-03, D-22)
+        // Grounded answers persist their retrieved chunks via a sentinel so source cards
+        // survive reload without a DB schema change (D-04/D-06).
+        const persistedContent = grounded
+          ? embedCitations(accumulatedContent, retrievedChunks)
+          : accumulatedContent;
         const aiMsg: NewMessage & { _conversationModel: string } = {
           id: aiMsgId,
           conversationId,
           role: "assistant",
-          content: accumulatedContent,
+          content: persistedContent,
           model: currentModel,
           createdAt: new Date(Date.now()),
           deletedAt: null,
@@ -269,6 +302,7 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
     isStreaming,
     conversationId,
     currentModel,
+    kbScope,
     existingMessages,
     insertUserMessage,
     insertAiMessage,
@@ -364,6 +398,39 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
             "py-2"
           )}
         />
+
+        {/* D-03: Per-message KB-scope toggle ("Usar KB" / "KB ativa").
+            On-state uses the reserved accent (UI-SPEC accent item 2, mirrors the send button);
+            off-state is a muted ghost pill. 36px height (h-9) matches the model picker. */}
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setKbScope(!kbScope)}
+                disabled={isStreaming}
+                aria-pressed={kbScope}
+                aria-label={kbScope ? "KB ativa" : "Usar KB"}
+                className={cn(
+                  "h-9 shrink-0 gap-1.5 text-xs focus-visible:ring-2 focus-visible:ring-ring",
+                  kbScope
+                    ? "bg-accent text-accent-foreground hover:bg-accent/90"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <BookOpen size={14} />
+                {kbScope ? "KB ativa" : "Usar KB"}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>
+              {kbScope
+                ? "Resposta fundamentada na base de conhecimento"
+                : "Fundamentar esta mensagem na base de conhecimento"}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
 
         {/* D-20: Model picker — dropdown showing current model */}
         <Select
