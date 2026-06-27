@@ -13,6 +13,15 @@
     "store:allow-set",
     "store:allow-get",
     "store:allow-load",
-    "store:allow-save"
+    "store:allow-save",
+    "dialog:allow-open",
+    {
+      "identifier": "fs:allow-read-text-file",
+      "allow": [{ "path": "$APPDATA/**" }]
+    },
+    {
+      "identifier": "fs:allow-exists",
+      "allow": [{ "path": "$APPDATA/**" }]
+    }
   ]
 }

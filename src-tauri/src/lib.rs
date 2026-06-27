@@ -39,6 +39,7 @@ pub fn run() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .plugin(tauri_plugin_updater::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_fs::init())
         .setup(|app| {
             // WAL must run BEFORE tauri-plugin-sql plugin opens the sqlx pool
             let app_data_dir = app.path().app_data_dir()?;
