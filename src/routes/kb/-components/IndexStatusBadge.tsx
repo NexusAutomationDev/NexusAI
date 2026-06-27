@@ -14,7 +14,6 @@
 
 import { useIndexingStore } from '@/lib/stores/indexing';
 import type { IndexStatus } from '@/lib/stores/indexing';
-import { useReindexItem } from '@/lib/queries/kb';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -38,11 +37,23 @@ export interface IndexStatusBadgeProps {
   dbStatus: IndexStatus;
   /** DB-persisted error reason — fallback for the failed tooltip. */
   dbErrorReason?: string | null;
+  /**
+   * Reindex handler (D-12). Wired by the route (which owns the QueryClient/mutation).
+   * Kept as a prop so the badge renders standalone without a QueryClient (testable/pure).
+   */
+  onReindex?: (itemId: string) => void;
+  /** Disables the Reindexar button while a reindex is in flight. */
+  reindexPending?: boolean;
 }
 
-export function IndexStatusBadge({ itemId, dbStatus, dbErrorReason }: IndexStatusBadgeProps) {
+export function IndexStatusBadge({
+  itemId,
+  dbStatus,
+  dbErrorReason,
+  onReindex,
+  reindexPending,
+}: IndexStatusBadgeProps) {
   const live = useIndexingStore((s) => s.items[itemId]);
-  const reindex = useReindexItem();
 
   // Reconcile: live store wins; otherwise fall back to the DB row.
   const status: IndexStatus = live?.status ?? dbStatus;
@@ -95,15 +106,17 @@ export function IndexStatusBadge({ itemId, dbStatus, dbErrorReason }: IndexStatu
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <Button
-        variant="ghost"
-        size="sm"
-        className="h-7"
-        disabled={reindex.isPending}
-        onClick={() => reindex.mutate(itemId)}
-      >
-        Reindexar
-      </Button>
+      {onReindex && (
+        <Button
+          variant="ghost"
+          size="sm"
+          className="h-7"
+          disabled={reindexPending}
+          onClick={() => onReindex(itemId)}
+        >
+          Reindexar
+        </Button>
+      )}
     </div>
   );
 }

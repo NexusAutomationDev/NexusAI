@@ -21,7 +21,7 @@ export interface SidebarModule {
 
 export const MODULES: SidebarModule[] = [
   { id: "chat",     icon: MessageSquare, label: "Chat",                  route: "/chat",     implemented: true },
-  { id: "kb",       icon: BookOpen,      label: "Base de Conhecimento",  route: "/kb",       implemented: false },
+  { id: "kb",       icon: BookOpen,      label: "Base de Conhecimento",  route: "/kb",       implemented: true },
   { id: "gmail",    icon: Mail,          label: "Gmail",                 route: "/gmail",    implemented: false },
   { id: "calendar", icon: CalendarDays,  label: "Calendário",            route: "/calendar", implemented: false },
   { id: "mcp",      icon: Plug,          label: "MCPs",                  route: "/mcp",      implemented: false },
