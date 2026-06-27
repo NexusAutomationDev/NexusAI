@@ -158,6 +158,57 @@ export function useReindexItem() {
 }
 
 /**
+ * Read a note's raw Markdown from disk (app-data/kb-notes/<id>.md, D-08).
+ * The note item row lives in SQLite (useKbNote), but the content is the on-disk .md that the
+ * create_note command wrote verbatim. We read it through the fs plugin scoped to AppData.
+ * Returns "" for a not-yet-saved (new) note id.
+ */
+export function useNoteContent(id: string | null) {
+  return useQuery({
+    queryKey: [...kbKeys.item(id ?? ''), 'content'] as const,
+    queryFn: async (): Promise<string> => {
+      if (!id) return '';
+      const { readTextFile, exists, BaseDirectory } = await import('@tauri-apps/plugin-fs');
+      const path = `kb-notes/${id}.md`;
+      if (!(await exists(path, { baseDir: BaseDirectory.AppData }))) return '';
+      return readTextFile(path, { baseDir: BaseDirectory.AppData });
+    },
+    enabled: !!id,
+  });
+}
+
+/**
+ * Create or update a note: write the EXACT Markdown to disk + (re)embed it (D-08, Plan 03-03).
+ * Seeds pending, streams IndexProgress via the indexingStore (status badge transitions),
+ * then invalidates items + the note's content cache. The content string is persisted verbatim —
+ * the command writes raw .md with no mutation (see create_note in nexusai-kb).
+ */
+export function useCreateNote() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async (input: {
+      itemId: string;
+      title: string;
+      content: string;
+      folderId?: string | null;
+    }): Promise<void> => {
+      const { setPending, startIndexing } = useIndexingStore.getState();
+      setPending(input.itemId);
+      await startIndexing('create_note', {
+        itemId: input.itemId,
+        title: input.title,
+        content: input.content,
+        folderId: input.folderId ?? null,
+      });
+    },
+    onSuccess: (_data, vars) => {
+      qc.invalidateQueries({ queryKey: kbKeys.items() });
+      qc.invalidateQueries({ queryKey: [...kbKeys.item(vars.itemId), 'content'] });
+    },
+  });
+}
+
+/**
  * Delete an item + purge its chunks/vectors (Rust soft-delete + cascade).
  * NOTE: delete_item takes the bare itemId (NOT an input wrapper) — see bindings.ts.
  */
