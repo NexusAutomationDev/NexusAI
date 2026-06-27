@@ -1,5 +1,6 @@
 import { Outlet } from "@tanstack/react-router";
 import { Sidebar } from "./Sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 export function AppShell() {
   return (
@@ -9,6 +10,8 @@ export function AppShell() {
       <main className="ml-12 flex-1 overflow-auto">
         <Outlet />
       </main>
+      {/* Sonner toasts: URL-paste flow + terminal-failure (D-11) */}
+      <Toaster />
     </div>
   );
 }
