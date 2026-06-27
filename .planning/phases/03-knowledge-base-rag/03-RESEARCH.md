@@ -163,7 +163,7 @@ src/
 │   │   └── IndexStatusBadge.tsx # selector off indexingStore
 ├── lib/stores/indexing.ts      # Zustand indexingStore (D-11)
 ├── lib/queries/kb.ts           # TanStack Query CRUD for items/notes/folders
-└── routes/chat/-components/
+└── routes/chat/components/
     ├── MessageInput.tsx        # + KB-scope selector (D-03)
     └── MarkdownRenderer.tsx    # + citation [n] custom node (D-04)
 ```

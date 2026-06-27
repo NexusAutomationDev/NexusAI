@@ -2,7 +2,7 @@
 phase: 3
 slug: knowledge-base-rag
 status: draft
-nyquist_compliant: false
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-06-26
 ---
@@ -36,20 +36,20 @@ created: 2026-06-26
 
 ## Per-Task Verification Map
 
-| Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
-|---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| TBD | TBD | 0 | KB-01 | unit (Rust) | `cargo test -p nexusai-kb chunk` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-02 | unit (Rust) | `cargo test -p nexusai-kb rrf` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-02 | unit (Rust, in-mem db) | `cargo test -p nexusai-kb vector` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-03 | component (Vitest) | `npm run test -- kb-notes-editor` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-04 | unit (Rust) | `cargo test -p nexusai-kb scrape` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-05 | component (Vitest) | `npm run test -- kb-items-table` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-05 | component (Vitest) | `npm run test -- kb-indexing-store` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-06 | unit (Rust) | `cargo test -p nexusai-kb query` | ❌ W0 | ⬜ pending |
-| TBD | TBD | 0 | KB-07 | integration (Rust, network-off) | `cargo test -p nexusai-kb offline -- --ignored` | ❌ W0 | ⬜ pending |
+| RED Authored | Turned Green | Wave | Requirement | Test Type | Automated Command | Status |
+|--------------|--------------|------|-------------|-----------|-------------------|--------|
+| 03-00 · T2 | 03-01 | 0→2 | KB-01 | unit (Rust) | `cargo test -p nexusai-kb chunk` | ⬜ pending |
+| 03-00 · T2 | 03-01/03-02 | 0→2 | KB-02 | unit (Rust) | `cargo test -p nexusai-kb rrf` | ⬜ pending |
+| 03-00 · T2 | 03-02 | 0→2 | KB-02 | unit (Rust, in-mem db) | `cargo test -p nexusai-kb vector` | ⬜ pending |
+| 03-00 · T3 | 03-05 | 0→3 | KB-03 | component (Vitest) | `npm run test -- kb-notes-editor` | ⬜ pending |
+| 03-00 · T2 | 03-01 | 0→2 | KB-04 | unit (Rust) | `cargo test -p nexusai-kb scrape` | ⬜ pending |
+| 03-00 · T3 | 03-04 | 0→3 | KB-05 | component (Vitest) | `npm run test -- kb-items-table` | ⬜ pending |
+| 03-00 · T3 | 03-04 | 0→3 | KB-05 | component (Vitest) | `npm run test -- kb-indexing-store` | ⬜ pending |
+| 03-00 · T2 | 03-03 · T1 | 0→3 | KB-06 | unit (Rust, in-mem db) | `cargo test -p nexusai-kb query` | ⬜ pending |
+| 03-00 · T2 | 03-02 | 0→2 | KB-07 | integration (Rust, network-off) | `cargo test -p nexusai-kb offline -- --ignored` | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
-*Task IDs assigned by the planner; every KB-XX requirement above maps to at least one task.*
+*"RED Authored" = plan·task that writes the failing Wave 0 test; "Turned Green" = plan(s) that implement it. Every KB-XX requirement maps to at least one automated test — KB-06 is now backed by `test_query_chunks_no_scoping` (03-00 T2 → 03-03 T1) rather than a grep alone.*
 
 ---
 
@@ -60,6 +60,7 @@ created: 2026-06-26
 - [ ] `src-tauri/crates/nexusai-kb/src/search.rs` test — KB-02 RRF determinism + FTS5 bm25 ordering
 - [ ] `src-tauri/crates/nexusai-kb/src/ingest.rs` test — KB-04 dom_smoothie HTML fixture extraction
 - [ ] `src-tauri/crates/nexusai-kb/src/embed.rs` offline integration test — KB-07 / criterion #5 (`#[ignore]`-gated)
+- [ ] `src-tauri/crates/nexusai-kb/src/store.rs` test — KB-06 `query_chunks` returns chunks with no agent/owner scoping (`test_query_chunks_no_scoping`)
 - [ ] `tests/kb-indexing-store.test.ts` — D-11 store transitions (pending→indexing→indexed→failed)
 - [ ] `tests/kb-items-table.test.tsx` — D-09/D-10 faceted filters
 - [ ] `tests/kb-notes-editor.test.tsx` — D-08 no-mutation invariant
@@ -79,11 +80,11 @@ created: 2026-06-26
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
-- [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
-- [ ] No watch-mode flags
-- [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] Sampling continuity: no 3 consecutive tasks without automated verify
+- [x] Wave 0 covers all MISSING references (KB-06 `query` test now authored in 03-00 T2)
+- [x] No watch-mode flags
+- [x] Feedback latency < 30s
+- [x] `nyquist_compliant: true` set in frontmatter
 
-**Approval:** pending
+**Approval:** plans validated — Wave 0 RED tests authored across 03-00; every KB-XX requirement maps to an automated command. `wave_0_complete` flips to `true` once Plan 03-00 executes and the RED suite is confirmed failing.
