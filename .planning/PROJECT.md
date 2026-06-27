@@ -12,15 +12,15 @@ Um workspace desktop unificado onde toda a informação do usuário (emails, arq
 
 ### Validated
 
-(None yet — ship to validate)
+- [x] Knowledge base estilo Obsidian — browser de arquivos/notas/URLs com status de indexação (Validated in Phase 3; emails ficam para Phase 5)
+- [x] Notas integradas — editor Markdown CodeMirror sem mutação, organização por pastas, recuperáveis via RAG (Validated in Phase 3)
 
 ### Active
 
 - [ ] Chat com LLMs configurável via GUI (OpenRouter, Gemini API, OpenAI API — troca de modelo sem reiniciar)
 - [ ] Benchmark / score de LLMs (mesmo prompt em múltiplos modelos, pontuação de qualidade)
-- [ ] Knowledge base estilo Obsidian (visualização de arquivos, documentos, histórico, URLs e emails)
-- [ ] IA com acesso ao knowledge base (arquivos locais, histórico de conversas, emails/calendário, URLs salvas)
-- [ ] Compartilhamento de conhecimento entre agentes
+- [ ] IA com acesso ao knowledge base (arquivos locais, histórico de conversas, emails/calendário, URLs salvas) — RAG sobre arquivos/notas/URLs entregue na Phase 3; emails/calendário pendentes (Phase 5)
+- [ ] Compartilhamento de conhecimento entre agentes — índice único compartilhado pronto (Phase 3, D-16); agentes em si na Phase 7
 - [ ] Integração Gmail (ler, escrever, gerenciar emails dentro do app)
 - [ ] Calendário (visualizar e gerenciar agenda)
 - [ ] Notas integradas
@@ -79,4 +79,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-06-25 after initialization*
+*Last updated: 2026-06-27 after Phase 3 (Knowledge Base + RAG) completion*
