@@ -189,9 +189,10 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
     clearAttachments();
 
     // 2a. KB grounding (D-03/D-04) — per-message: when "Usar KB" is on, run hybrid
-    // retrieval, prepend a citation prompt as a grounding preamble, and persist the
-    // retrieved chunks with the assistant answer (D-06: cards are driven by this array,
-    // independent of whether the model emits [n] markers).
+    // retrieval via the query_kb command (retrieveForQuery → commands.queryKb), prepend a
+    // citation prompt as a grounding preamble, and persist the retrieved chunks with the
+    // assistant answer (D-06: cards are driven by this array, independent of whether the
+    // model emits [n] markers).
     const grounded = kbScope;
     let retrievedChunks: Citation[] = [];
     let groundingPreamble: string | null = null;
