@@ -12,15 +12,142 @@ pub struct Chunk {
     pub char_end: usize,
 }
 
+/// Characters-per-token heuristic. ~512 tokens ≈ ~2048 chars (03-RESEARCH §Chunking).
+const CHARS_PER_TOKEN: usize = 4;
+
+/// A segmented block of the source text: a paragraph or heading-bounded span,
+/// carrying its character offsets into the original text and the active section.
+struct Block {
+    char_start: usize,
+    char_end: usize,
+    section: Option<String>,
+}
+
 /// Split `text` into overlapping, paragraph-aware, token-bounded chunks.
 ///
 /// `target_tokens` caps chunk size; `overlap_tokens` controls how much
-/// consecutive chunks share. Markdown headings (`#`/`##`) become the `section`
-/// of the chunks that follow them.
-///
-/// RED stub — real implementation lands in Plan 03-01.
-pub fn chunk_text(_text: &str, _target_tokens: usize, _overlap_tokens: usize) -> Vec<Chunk> {
-    unimplemented!("chunk_text implemented in Plan 03-01")
+/// consecutive chunks share. Markdown headings (`#`..`######`) become the
+/// `section` of the chunks that follow them. Char offsets index the original
+/// `text` (char positions, not bytes).
+pub fn chunk_text(text: &str, target_tokens: usize, overlap_tokens: usize) -> Vec<Chunk> {
+    let target_chars = (target_tokens * CHARS_PER_TOKEN).max(1);
+    let overlap_chars = overlap_tokens * CHARS_PER_TOKEN;
+
+    let chars: Vec<char> = text.chars().collect();
+    let blocks = segment_blocks(&chars);
+    if blocks.is_empty() {
+        return Vec::new();
+    }
+
+    let mut chunks: Vec<Chunk> = Vec::new();
+    let mut ordinal: usize = 0;
+
+    for block in &blocks {
+        // A block may itself exceed target_chars — hard-split it.
+        let mut pos = block.char_start;
+        while pos < block.char_end {
+            let mut end = (pos + target_chars).min(block.char_end);
+
+            // Determine this chunk's start, applying overlap against the
+            // previous chunk so consecutive chunks share text.
+            let start = if let Some(prev) = chunks.last() {
+                pos.saturating_sub(overlap_chars).max(0)
+                    // never overlap further back than where the prev chunk began
+                    .max(prev.char_start.min(pos))
+            } else {
+                pos
+            };
+
+            // Ensure forward progress even with tiny targets.
+            if end <= pos {
+                end = block.char_end;
+            }
+
+            let content: String = chars[start..end].iter().collect();
+            chunks.push(Chunk {
+                content,
+                ordinal,
+                section: block.section.clone(),
+                char_start: start,
+                char_end: end,
+            });
+            ordinal += 1;
+            pos = end;
+        }
+    }
+
+    chunks
+}
+
+/// Segment the char slice into blocks on Markdown headings and blank-line
+/// (`\n\n`) paragraph boundaries, tracking the active section heading.
+fn segment_blocks(chars: &[char]) -> Vec<Block> {
+    let full: String = chars.iter().collect();
+    let mut blocks: Vec<Block> = Vec::new();
+    let mut section: Option<String> = None;
+
+    // Walk line by line, tracking char offsets. Headings update `section` and
+    // are not emitted as content blocks; consecutive non-blank lines accumulate
+    // into a paragraph block until a blank line closes it.
+    let mut line_start_char = 0usize; // char offset of current line start
+    let mut para_start: Option<usize> = None; // char offset where current paragraph began
+    let mut para_end = 0usize; // char offset just past current paragraph content
+
+    let flush = |start: Option<usize>, end: usize, sec: &Option<String>, blocks: &mut Vec<Block>| {
+        if let Some(s) = start {
+            if end > s {
+                blocks.push(Block {
+                    char_start: s,
+                    char_end: end,
+                    section: sec.clone(),
+                });
+            }
+        }
+    };
+
+    for line in full.split_inclusive('\n') {
+        let line_len = line.chars().count();
+        let trimmed = line.trim_end_matches(['\n', '\r']);
+        let trimmed_start = trimmed.trim_start();
+
+        let is_heading = trimmed_start.starts_with('#')
+            && trimmed_start
+                .trim_start_matches('#')
+                .starts_with(|c: char| c == ' ' || c.is_whitespace())
+            && trimmed_start.matches('#').count() <= 6;
+
+        if is_heading {
+            // Close any open paragraph, then set the new section.
+            flush(para_start, para_end, &section, &mut blocks);
+            para_start = None;
+            let heading_text = trimmed_start.trim_start_matches('#').trim().to_string();
+            section = if heading_text.is_empty() {
+                None
+            } else {
+                Some(heading_text)
+            };
+        } else if trimmed.trim().is_empty() {
+            // Blank line → paragraph boundary.
+            flush(para_start, para_end, &section, &mut blocks);
+            para_start = None;
+        } else {
+            // Content line → extend the current paragraph.
+            if para_start.is_none() {
+                para_start = Some(line_start_char);
+            }
+            para_end = line_start_char + trimmed.chars().count();
+        }
+
+        line_start_char += line_len;
+    }
+    flush(para_start, para_end, &section, &mut blocks);
+
+    blocks
+}
+
+/// Default chunking used by Plan 03-03 callers: ~512 tokens, ~64 overlap.
+pub fn chunk_default(text: &str) -> Vec<Chunk> {
+    chunk_text(text, 512, 64)
 }
 
 #[cfg(test)]
