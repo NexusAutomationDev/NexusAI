@@ -4,33 +4,36 @@ import { invoke as __TAURI_INVOKE, Channel } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
+	/**  Import a local file → parse → chunk → embed → store (KB-01). */
+	importFile: (input: ImportFileInput, onEvent: Channel<IndexProgress>) => typedError<null, string>(__TAURI_INVOKE("import_file", { input, onEvent })),
+	/**  Fetch a URL → extract main article → chunk → embed → store (KB-04). */
+	addUrl: (input: AddUrlInput, onEvent: Channel<IndexProgress>) => typedError<null, string>(__TAURI_INVOKE("add_url", { input, onEvent })),
 	/**
-	 *  Stream LLM response token-by-token via Channel API (CHAT-01, FOUND-05).
-	 *  Sends full history to support per-message model switching (D-23, CHAT-03).
+	 *  Create a note: write RAW markdown to disk (no normalization, D-08) then
+	 *  index its content (KB-03 storage; editor UI is Plan 03-05).
 	 */
-	streamChat: (input: StreamChatInput, onEvent: Channel<StreamEvent>) => typedError<null, string>(__TAURI_INVOKE("stream_chat", { input, onEvent })),
-	/**  Cancel an in-progress stream for a conversation (D-14: stop button). */
-	stopStreaming: (conversationId: string) => typedError<null, string>(__TAURI_INVOKE("stop_streaming", { conversationId })),
+	createNote: (input: CreateNoteInput, onEvent: Channel<IndexProgress>) => typedError<null, string>(__TAURI_INVOKE("create_note", { input, onEvent })),
 	/**
-	 *  Open OS native file picker, validate, and return file as base64 (CHAT-04, D-15).
-	 *  Enforces 10MB limit and allowlist of types (D-17).
-	 *  AppHandle<R> is injected automatically by Tauri — not deserialized from IPC.
+	 *  Hybrid retrieval over the single shared index → citation chunks (KB-02, KB-06).
+	 *  No agent/owner scoping (D-16).
 	 */
-	pickAndEncodeFile: () => typedError<FileAttachment, string>(__TAURI_INVOKE("pick_and_encode_file")),
+	queryKb: (input: QueryKbInput) => typedError<QueryKbOutput, string>(__TAURI_INVOKE("query_kb", { input })),
 	/**
-	 *  Encode a file at a known OS path to base64 (used by drag-drop — D-15).
-	 *  Tauri onDragDropEvent provides file paths; this command validates and encodes them.
-	 *  Applies same allowlist + 10MB limit as pick_and_encode_file (T-02-06-03).
+	 *  Idempotently re-index an item (D-12): delete existing chunks/vectors first.
+	 *  Re-reads the source from kb_items.source_path.
 	 */
-	encodeFileFromPath: (path: string) => typedError<FileAttachment, string>(__TAURI_INVOKE("encode_file_from_path", { path })),
-	/**
-	 *  Auto-generate a 3-8 word conversation title from the first exchange (D-06).
-	 *  Called by MessageInput.tsx after the first AI response completes.
-	 */
-	generateConversationTitle: (input: GenerateTitleInput) => typedError<GenerateTitleOutput, string>(__TAURI_INVOKE("generate_conversation_title", { input })),
+	reindexItem: (input: ReindexInput, onEvent: Channel<IndexProgress>) => typedError<null, string>(__TAURI_INVOKE("reindex_item", { input, onEvent })),
+	/**  Soft-delete an item + purge its chunks/vectors (cascade + vector delete). */
+	deleteItem: (itemId: string) => typedError<null, string>(__TAURI_INVOKE("delete_item", { itemId })),
 };
 
 /* Types */
+/**  Input to the `add_url` command (Plan 03-03). */
+export type AddUrlInput = {
+	itemId: string,
+	url: string,
+};
+
 export type ApiKeyStatus = {
 	configured: boolean,
 };
@@ -43,6 +46,24 @@ export type ChatMessage = {
 	role: MessageRole,
 	content: string,
 	attachments: FileAttachment[] | null,
+};
+
+/**  A retrieved citation backing a source card in the chat answer (D-04). */
+export type Citation = {
+	id: string,
+	itemId: string,
+	itemTitle: string,
+	kind: KbKind,
+	section: string | null,
+	snippet: string,
+};
+
+/**  Input to the `create_note` command (Plan 03-03). */
+export type CreateNoteInput = {
+	itemId: string,
+	title: string,
+	content: string,
+	folderId: string | null,
 };
 
 /**  File attachment data passed from Tauri dialog → Rust → frontend for preview. */
@@ -66,7 +87,55 @@ export type GenerateTitleOutput = {
 	title: string,
 };
 
+/**  Input to the `import_file` command (Plan 03-03). */
+export type ImportFileInput = {
+	itemId: string,
+	path: string,
+	title: string,
+};
+
+/**
+ *  Indexing progress events streamed over a Tauri Channel during ingestion.
+ *  Tagged-enum shape identical to the chat StreamEvent so the frontend reuses
+ *  the same Channel handler pattern (03-RESEARCH §Pattern 4).
+ */
+export type IndexProgress = { event: "started"; data: {
+	item_id: string,
+	total_chunks: number | null,
+} } | { event: "chunk"; data: {
+	item_id: string,
+	done: number,
+	total: number | null,
+} } | { event: "indexed"; data: {
+	item_id: string,
+} } | { event: "failed"; data: {
+	item_id: string,
+	reason: string,
+} };
+
+/**
+ *  Kind of knowledge-base item. Serializes lowercase to match the Drizzle CHECK
+ *  constraint values (`file` / `note` / `url`).
+ */
+export type KbKind = "file" | "note" | "url";
+
 export type MessageRole = "user" | "assistant";
+
+/**  Input to the `query_kb` command (Plan 03-03). */
+export type QueryKbInput = {
+	query: string,
+	topK: number,
+};
+
+/**  Output of the `query_kb` command (Plan 03-03). */
+export type QueryKbOutput = {
+	chunks: Citation[],
+};
+
+/**  Input to the `reindex` command (Plan 03-03). */
+export type ReindexInput = {
+	itemId: string,
+};
 
 /**  Input to the stream_chat command. */
 export type StreamChatInput = {

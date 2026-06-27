@@ -12,19 +12,28 @@ fn initialize_database(app_data_dir: &std::path::Path) -> Result<(), Box<dyn std
     Ok(())
 }
 
+/// Export the tauri-specta TypeScript bindings to `../src/lib/bindings.ts`.
+///
+/// Single source of truth for the command set exported to the frontend. Called
+/// from `run()` in debug builds (dev) and reused by the bindings-export test so
+/// the file can be regenerated headlessly (no GUI launch needed).
+#[cfg(debug_assertions)]
+pub fn export_bindings() {
+    use specta_typescript::Typescript;
+    use tauri_specta::Builder;
+    Builder::<tauri::Wry>::new()
+        .commands(nexusai_settings::collect_commands())
+        .commands(nexusai_chat::collect_commands())
+        .commands(nexusai_kb::collect_commands())
+        .export(Typescript::default(), "../src/lib/bindings.ts")
+        .expect("Failed to export tauri-specta bindings");
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     // Export TypeScript bindings in debug mode (dev only)
     #[cfg(debug_assertions)]
-    {
-        use specta_typescript::Typescript;
-        use tauri_specta::Builder;
-        Builder::<tauri::Wry>::new()
-            .commands(nexusai_settings::collect_commands())
-            .commands(nexusai_chat::collect_commands())
-            .export(Typescript::default(), "../src/lib/bindings.ts")
-            .expect("Failed to export tauri-specta bindings");
-    }
+    export_bindings();
 
     tauri::Builder::default()
         .plugin(tauri_plugin_store::Builder::default().build())
@@ -35,6 +44,15 @@ pub fn run() {
             let app_data_dir = app.path().app_data_dir()?;
             std::fs::create_dir_all(&app_data_dir)?;
             initialize_database(&app_data_dir)?;
+
+            // Register the sqlite-vec auto-extension BEFORE any KB connection is
+            // opened (Pattern 1 ordering: auto-extensions only apply to
+            // connections opened afterwards). Then bootstrap the KB virtual
+            // tables (vec0 + fts5) + triggers — they live outside Drizzle.
+            nexusai_kb::vector::register_sqlite_vec();
+            let kb_db_path = app_data_dir.join("nexusai.db");
+            nexusai_kb::store::kb_connection(&kb_db_path)?;
+
             Ok(())
         })
         // tauri-plugin-sql registered AFTER WAL initialization in setup()
@@ -55,6 +73,12 @@ pub fn run() {
             nexusai_chat::commands::pick_and_encode_file,
             nexusai_chat::commands::encode_file_from_path,
             nexusai_chat::commands::generate_conversation_title,
+            nexusai_kb::commands::import_file,
+            nexusai_kb::commands::add_url,
+            nexusai_kb::commands::create_note,
+            nexusai_kb::commands::query_kb,
+            nexusai_kb::commands::reindex_item,
+            nexusai_kb::commands::delete_item,
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
