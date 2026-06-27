@@ -83,7 +83,7 @@ Plans:
 - [x] 03-02-PLAN.md — Wave 2: Rust embeddings (fastembed E5) + sqlite-vec + FTS5/RRF search
 - [x] 03-03-PLAN.md — Wave 3: KB Tauri commands + progress + store + app registration
 - [x] 03-04-PLAN.md — Wave 4: indexingStore + KB queries + browser (tree/table/dropzone)
-- [ ] 03-05-PLAN.md — Wave 5: CodeMirror notes editor + /kb two-pane route + sidebar enable
+- [x] 03-05-PLAN.md — Wave 5: CodeMirror notes editor + /kb two-pane route + sidebar enable
 - [x] 03-06-PLAN.md — Wave 4: Chat RAG — KB-scope selector + citations ([n] + source cards)
 - [ ] 03-07-PLAN.md — Wave 6: Human smoke test checkpoint
 **UI hint**: yes

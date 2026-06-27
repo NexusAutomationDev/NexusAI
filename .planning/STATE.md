@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 03-04-PLAN.md
-last_updated: "2026-06-27T04:06:38.425Z"
+stopped_at: Completed 03-05-PLAN.md
+last_updated: "2026-06-27T04:39:52.325Z"
 last_activity: 2026-06-27
 progress:
   total_phases: 8
   completed_phases: 2
   total_plans: 23
-  completed_plans: 21
+  completed_plans: 22
   percent: 25
 ---
 
@@ -26,7 +26,7 @@ See: .planning/PROJECT.md (updated 2026-06-25)
 ## Current Position
 
 Phase: 03 (knowledge-base-rag) — EXECUTING
-Plan: 7 of 8
+Plan: 8 of 8
 Status: Ready to execute
 Last activity: 2026-06-27
 
@@ -59,6 +59,7 @@ Progress: [██░░░░░░░░] 25%
 | Phase 03 P03 | 11min | 3 tasks | 6 files |
 | Phase 03 P06 | 8min | 3 tasks | 5 files |
 | Phase 03 P04 | 11min | 3 tasks | 12 files |
+| Phase 03-knowledge-base-rag P05 | 28min | 3 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -78,6 +79,7 @@ Recent decisions affecting current work:
 - [Phase 03]: KB integration: six Tauri commands wire ingest/query/reindex; sqlite-vec registered at startup; bindings exported via headless export-bindings bin
 - [Phase 03]: RAG chat (03-06): citations persisted via HTML-comment sentinel in message.content (no DB migration); grounded send injects citation prompt into existing stream; source cards driven by retriever array (D-06 fallback)
 - [Phase 03]: KB browser (03-04): indexingStore (D-11) single status source normalizing snake_case Channel events; hydrateFromDb forces stuck 'indexing'→'failed'; pure props-driven KB components with route-owned mutations
+- [Phase 03-knowledge-base-rag]: KB notes editor (03-05): CodeMirror raw-markdown no-mutation (D-08); note content read from disk (fs plugin) separate from SQLite row; save via create_note re-embed; jsdom geometry polyfills for headless CodeMirror tests
 
 ### Pending Todos
 
@@ -93,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-06-27T04:06:38.419Z
-Stopped at: Completed 03-04-PLAN.md
+Last session: 2026-06-27T04:39:52.320Z
+Stopped at: Completed 03-05-PLAN.md
 Resume file: None
