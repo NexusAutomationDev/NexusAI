@@ -5,6 +5,7 @@
 // compiles but the tests fail (RED).
 
 pub mod chunk;
+pub mod schema;
 pub mod vector;
 pub mod search;
 pub mod ingest;
