@@ -76,7 +76,7 @@ interface SettingsStore {
 let _store: Awaited<ReturnType<typeof load>> | null = null;
 
 async function getStore() {
-  if (!_store) _store = await load('settings.json', { autoSave: true });
+  if (!_store) _store = await load('settings.json', { autoSave: true, defaults: {} });
   return _store;
 }
 

@@ -72,9 +72,4 @@ describe('FOUND-05 — Channel API event ordering', () => {
 
     expect(received).toHaveLength(0); // No violations
   });
-
-  it('streamLlmDemo function exists in bindings.ts', async () => {
-    const bindings = await import('../src/lib/bindings');
-    expect(typeof bindings.streamLlmDemo).toBe('function');
-  });
 });

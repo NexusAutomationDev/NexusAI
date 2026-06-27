@@ -35,7 +35,7 @@ interface AppearanceStore {
 let _store: Awaited<ReturnType<typeof load>> | null = null;
 
 async function getStore() {
-  if (!_store) _store = await load('appearance.json', { autoSave: true });
+  if (!_store) _store = await load('appearance.json', { autoSave: true, defaults: {} });
   return _store;
 }
 

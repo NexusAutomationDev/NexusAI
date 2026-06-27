@@ -256,7 +256,7 @@ export function useUpdateConversationTitle() {
 export function useDeleteMessage() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({ messageId, conversationId }: { messageId: string; conversationId: string }): Promise<void> => {
+    mutationFn: async ({ messageId }: { messageId: string; conversationId: string }): Promise<void> => {
       await db
         .update(messages)
         .set({ deletedAt: new Date(Date.now()) })
