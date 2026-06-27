@@ -78,7 +78,7 @@ Plans:
   5. Embeddings for all indexed content are computed locally with no external API call — app functions in offline mode for KB queries against already-indexed content
 **Plans**: 8 plans
 Plans:
-- [ ] 03-00-PLAN.md — Wave 1: Deps + KB schema/migration + Wave 0 RED tests & fixtures
+- [x] 03-00-PLAN.md — Wave 1: Deps + KB schema/migration + Wave 0 RED tests & fixtures
 - [ ] 03-01-PLAN.md — Wave 2: Rust ingest (file/URL parse) + chunking + IPC types
 - [ ] 03-02-PLAN.md — Wave 2: Rust embeddings (fastembed E5) + sqlite-vec + FTS5/RRF search
 - [ ] 03-03-PLAN.md — Wave 3: KB Tauri commands + progress + store + app registration

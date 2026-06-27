@@ -31,13 +31,13 @@
 
 ### Knowledge Base (KB)
 
-- [ ] **KB-01**: Usuário pode importar arquivos locais (PDF, .md, .txt, .docx) para o knowledge base — arquivos são indexados automaticamente com chunking semântico
-- [ ] **KB-02**: Usuário pode fazer perguntas ao LLM que responde baseado nos documentos indexados (RAG com hybrid retrieval: BM25 + vector search via sqlite-vec)
-- [ ] **KB-03**: Usuário pode criar, editar e organizar notas dentro do app em editor com suporte a Markdown
-- [ ] **KB-04**: Usuário pode salvar URLs para indexação — o app faz scraping e indexa o conteúdo no knowledge base
-- [ ] **KB-05**: Usuário pode visualizar todos os arquivos e notas do knowledge base em uma interface estilo file explorer (Obsidian-like)
-- [ ] **KB-06**: Conhecimento do knowledge base é compartilhado entre todos os agentes — nenhum agente tem silo isolado
-- [ ] **KB-07**: Embeddings são gerados localmente via fastembed-rs (ONNX) — nenhuma chamada de API externa para indexação
+- [x] **KB-01**: Usuário pode importar arquivos locais (PDF, .md, .txt, .docx) para o knowledge base — arquivos são indexados automaticamente com chunking semântico
+- [x] **KB-02**: Usuário pode fazer perguntas ao LLM que responde baseado nos documentos indexados (RAG com hybrid retrieval: BM25 + vector search via sqlite-vec)
+- [x] **KB-03**: Usuário pode criar, editar e organizar notas dentro do app em editor com suporte a Markdown
+- [x] **KB-04**: Usuário pode salvar URLs para indexação — o app faz scraping e indexa o conteúdo no knowledge base
+- [x] **KB-05**: Usuário pode visualizar todos os arquivos e notas do knowledge base em uma interface estilo file explorer (Obsidian-like)
+- [x] **KB-06**: Conhecimento do knowledge base é compartilhado entre todos os agentes — nenhum agente tem silo isolado
+- [x] **KB-07**: Embeddings são gerados localmente via fastembed-rs (ONNX) — nenhuma chamada de API externa para indexação
 
 ### LLM Benchmarking (BENCH)
 
@@ -113,13 +113,13 @@ Features identificadas mas explicitamente diferidas para evitar scope creep no v
 | CHAT-03 | Phase 2 — LLM Chat | Pending |
 | CHAT-04 | Phase 2 — LLM Chat | Pending |
 | CHAT-05 | Phase 2 — LLM Chat | Pending |
-| KB-01 | Phase 3 — Knowledge Base + RAG | Pending |
-| KB-02 | Phase 3 — Knowledge Base + RAG | Pending |
-| KB-03 | Phase 3 — Knowledge Base + RAG | Pending |
-| KB-04 | Phase 3 — Knowledge Base + RAG | Pending |
-| KB-05 | Phase 3 — Knowledge Base + RAG | Pending |
-| KB-06 | Phase 3 — Knowledge Base + RAG | Pending |
-| KB-07 | Phase 3 — Knowledge Base + RAG | Pending |
+| KB-01 | Phase 3 — Knowledge Base + RAG | Complete |
+| KB-02 | Phase 3 — Knowledge Base + RAG | Complete |
+| KB-03 | Phase 3 — Knowledge Base + RAG | Complete |
+| KB-04 | Phase 3 — Knowledge Base + RAG | Complete |
+| KB-05 | Phase 3 — Knowledge Base + RAG | Complete |
+| KB-06 | Phase 3 — Knowledge Base + RAG | Complete |
+| KB-07 | Phase 3 — Knowledge Base + RAG | Complete |
 | BENCH-01 | Phase 4 — LLM Benchmarking | Pending |
 | BENCH-02 | Phase 4 — LLM Benchmarking | Pending |
 | GMAIL-01 | Phase 5 — Gmail + Calendar | Pending |
