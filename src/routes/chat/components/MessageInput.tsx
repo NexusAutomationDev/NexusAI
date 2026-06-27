@@ -22,7 +22,9 @@ import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -34,7 +36,7 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useChatStore } from "@/lib/stores/chat";
-import { useSettingsStore, AVAILABLE_MODELS } from "@/lib/stores/settings";
+import { useSettingsStore, useAvailableModels, type ProviderId } from "@/lib/stores/settings";
 import {
   useInsertUserMessage,
   useInsertAiMessage,
@@ -78,9 +80,31 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
 
   // D-22: Default to last model used in conversation (via settings.chatModel fallback)
   const chatModel = useSettingsStore((s) => s.chatModel);
+  const availableModels = useAvailableModels();
+
+  // Group available models by provider for the Select dropdown
+  const modelsByProvider = availableModels.reduce<Record<ProviderId, typeof availableModels>>((acc, m) => {
+    if (!acc[m.provider]) acc[m.provider] = [];
+    acc[m.provider].push(m);
+    return acc;
+  }, {} as Record<ProviderId, typeof availableModels>);
+
+  const PROVIDER_LABELS: Record<ProviderId, string> = {
+    openai: 'OpenAI',
+    openrouter: 'OpenRouter',
+    gemini: 'Google Gemini',
+  };
+
   useEffect(() => {
     if (!currentModel) setCurrentModel(chatModel);
   }, [chatModel, currentModel, setCurrentModel]);
+
+  // Auto-switch model if current model is no longer in availableModels (provider key removed)
+  useEffect(() => {
+    if (availableModels.length > 0 && !availableModels.find(m => m.value === currentModel)) {
+      setCurrentModel(availableModels[0].value);
+    }
+  }, [availableModels, currentModel, setCurrentModel]);
 
   // D-24: Pre-fill textarea when edit draft is provided
   useEffect(() => {
@@ -355,10 +379,17 @@ export function MessageInput({ conversationId, onSendComplete, editDraft, onEdit
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            {AVAILABLE_MODELS.map((m) => (
-              <SelectItem key={m.value} value={m.value} className="text-xs">
-                {m.label}
-              </SelectItem>
+            {(Object.keys(modelsByProvider) as ProviderId[]).map((provider) => (
+              <SelectGroup key={provider}>
+                <SelectLabel className="text-xs text-muted-foreground px-2 py-1">
+                  {PROVIDER_LABELS[provider]}
+                </SelectLabel>
+                {modelsByProvider[provider].map((m) => (
+                  <SelectItem key={m.value} value={m.value} className="text-xs">
+                    {m.label}
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             ))}
           </SelectContent>
         </Select>
