@@ -16,7 +16,11 @@ export const db = drizzle(
       await sqlite.execute(sql, params as unknown[]);
       return { rows: [] };
     }
-    const rows = await sqlite.select(sql, params as unknown[]);
+    // @tauri-apps/plugin-sql returns rows as objects ({ col: val }),
+    // but Drizzle's sqlite-proxy expects rows as arrays ([val, val, ...]).
+    // Object.values() preserves column order because the plugin uses an ordered map.
+    const rawRows = await sqlite.select(sql, params as unknown[]) as Record<string, unknown>[];
+    const rows: unknown[][] = rawRows.map(row => Object.values(row));
     return {
       rows: method === 'get' ? (rows.length > 0 ? [rows[0]] : []) : rows,
     };
