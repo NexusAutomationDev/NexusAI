@@ -11,3 +11,4 @@ pub mod search;
 pub mod ingest;
 pub mod embed;
 pub mod store;
+pub mod progress;
