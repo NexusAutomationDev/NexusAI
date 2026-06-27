@@ -6,3 +6,22 @@ edition = "2021"
 [dependencies]
 tauri = { workspace = true }
 serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+fastembed = "5.17"
+# Pinned to 0.1.9 (stable): 0.1.10-alpha.4 ships a broken build — sqlite-vec.c
+# #includes "sqlite-vec-diskann.c" which is NOT in the published crate (packaging bug).
+# 0.1.9 predates the diskann feature and builds cleanly. vec0 API is unchanged.
+sqlite-vec = "=0.1.9"
+# DO NOT bump rusqlite past 0.31 — sqlite-vec transmute (sqlite3_auto_extension) breaks at 0.34+ (Pitfall 1)
+rusqlite = { version = "0.31", features = ["bundled"] }
+zerocopy = "0.7"
+pdf-extract = "0.10"
+docx-rust = "0.1"
+dom_smoothie = "0.18"
+reqwest = { version = "0.12", features = ["json"] }
+uuid = { version = "1", features = ["v4"] }
+lazy_static = "1"
+anyhow = "1"
+tauri-specta = { version = "=2.0.0-rc.25", features = ["derive", "typescript"] }
+specta = { version = "=2.0.0-rc.25" }

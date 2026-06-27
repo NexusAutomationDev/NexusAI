@@ -54,3 +54,44 @@ export type Message = typeof messages.$inferSelect;
 export type NewMessage = typeof messages.$inferInsert;
 export type Attachment = typeof attachments.$inferSelect;
 export type NewAttachment = typeof attachments.$inferInsert;
+
+// Phase 3: Knowledge Base tables
+export const kbFolders = sqliteTable('kb_folders', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  parentId: text('parent_id'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
+export const kbItems = sqliteTable('kb_items', {
+  id: text('id').primaryKey(),
+  kind: text('kind', { enum: ['file', 'note', 'url'] }).notNull(),
+  title: text('title').notNull(),
+  sourcePath: text('source_path'),
+  folderId: text('folder_id'),
+  status: text('status', { enum: ['pending', 'indexing', 'indexed', 'failed'] })
+    .notNull()
+    .default('pending'),
+  errorReason: text('error_reason'),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
+  deletedAt: integer('deleted_at', { mode: 'timestamp' }),
+});
+
+export const kbChunks = sqliteTable('kb_chunks', {
+  rowid: integer('rowid').primaryKey(),
+  id: text('id').notNull().unique(),
+  itemId: text('item_id').notNull(),
+  ordinal: integer('ordinal').notNull(),
+  content: text('content').notNull(),
+  section: text('section'),
+  charStart: integer('char_start'),
+  charEnd: integer('char_end'),
+});
+
+export type KbFolder = typeof kbFolders.$inferSelect;
+export type NewKbFolder = typeof kbFolders.$inferInsert;
+export type KbItem = typeof kbItems.$inferSelect;
+export type NewKbItem = typeof kbItems.$inferInsert;
+export type KbChunk = typeof kbChunks.$inferSelect;
+export type NewKbChunk = typeof kbChunks.$inferInsert;
