@@ -97,8 +97,8 @@ Plans:
   2. User can mark one response as the winner (or call it a tie), and that manual score is persisted and visible in benchmark history
 **Plans**: 5 plans
 Plans:
-- [ ] 04-00-PLAN.md — Wave 0: Testes RED (benchmark-store, benchmark-streaming, benchmark-history) + migração SQLite + deps Radix
-- [ ] 04-01-PLAN.md — Wave 1: Zustand benchmarkStore + TanStack Query hooks de histórico e persistência
+- [x] 04-00-PLAN.md — Wave 0: Testes RED (benchmark-store, benchmark-streaming, benchmark-history) + migração SQLite + deps Radix
+- [x] 04-01-PLAN.md — Wave 1: Zustand benchmarkStore + TanStack Query hooks de histórico e persistência
 - [ ] 04-02-PLAN.md — Wave 2: Componentes shadcn/ui (Tabs, Toggle, ToggleGroup) + rota /benchmark + BenchmarkPrompt + BenchmarkColumns + BenchmarkColumn
 - [ ] 04-03-PLAN.md — Wave 3: ScoringBar (D-03) + BenchmarkHistory tabela (D-04) + ativação sidebar
 - [ ] 04-04-PLAN.md — Wave 4: Checkpoint de verificação humana do fluxo completo
