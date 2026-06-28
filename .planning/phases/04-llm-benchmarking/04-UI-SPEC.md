@@ -1,7 +1,8 @@
 ---
 phase: 4
 slug: llm-benchmarking
-status: draft
+status: approved
+reviewed_at: 2026-06-28
 shadcn_initialized: false
 preset: manual (Tailwind v4 + shadcn components — sem components.json)
 created: 2026-06-28
