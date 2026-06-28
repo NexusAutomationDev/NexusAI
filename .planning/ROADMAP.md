@@ -95,7 +95,13 @@ Plans:
 **Success Criteria** (what must be TRUE):
   1. User can enter a prompt, select two or more models, and see all responses arrive in parallel columns — each streaming independently
   2. User can mark one response as the winner (or call it a tie), and that manual score is persisted and visible in benchmark history
-**Plans**: TBD
+**Plans**: 5 plans
+Plans:
+- [ ] 04-00-PLAN.md — Wave 0: Testes RED (benchmark-store, benchmark-streaming, benchmark-history) + migração SQLite + deps Radix
+- [ ] 04-01-PLAN.md — Wave 1: Zustand benchmarkStore + TanStack Query hooks de histórico e persistência
+- [ ] 04-02-PLAN.md — Wave 2: Componentes shadcn/ui (Tabs, Toggle, ToggleGroup) + rota /benchmark + BenchmarkPrompt + BenchmarkColumns + BenchmarkColumn
+- [ ] 04-03-PLAN.md — Wave 3: ScoringBar (D-03) + BenchmarkHistory tabela (D-04) + ativação sidebar
+- [ ] 04-04-PLAN.md — Wave 4: Checkpoint de verificação humana do fluxo completo
 **UI hint**: yes
 
 ### Phase 5: Gmail + Calendar
@@ -155,7 +161,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 1. Foundation | 0/6 | Planned | - |
 | 2. LLM Chat | 0/9 | Planned | - |
 | 3. Knowledge Base + RAG | 0/8 | Planned | - |
-| 4. LLM Benchmarking | 0/TBD | Not started | - |
+| 4. LLM Benchmarking | 0/5 | Planned | - |
 | 5. Gmail + Calendar | 0/TBD | Not started | - |
 | 6. MCP Management | 0/TBD | Not started | - |
 | 7. Agents + Automations | 0/TBD | Not started | - |
@@ -175,4 +181,4 @@ Recommendation: Add DASH-01 to formalize coverage. This can be done during Phase
 
 ---
 
-*Generated: 2026-06-25 | Phase 1 planned: 2026-06-25 | Phase 2 planned: 2026-06-26*
+*Generated: 2026-06-25 | Phase 1 planned: 2026-06-25 | Phase 2 planned: 2026-06-26 | Phase 4 planned: 2026-06-28*
