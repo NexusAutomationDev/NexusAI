@@ -100,7 +100,7 @@ Plans:
 - [x] 04-00-PLAN.md — Wave 0: Testes RED (benchmark-store, benchmark-streaming, benchmark-history) + migração SQLite + deps Radix
 - [x] 04-01-PLAN.md — Wave 1: Zustand benchmarkStore + TanStack Query hooks de histórico e persistência
 - [x] 04-02-PLAN.md — Wave 2: Componentes shadcn/ui (Tabs, Toggle, ToggleGroup) + rota /benchmark + BenchmarkPrompt + BenchmarkColumns + BenchmarkColumn
-- [ ] 04-03-PLAN.md — Wave 3: ScoringBar (D-03) + BenchmarkHistory tabela (D-04) + ativação sidebar
+- [x] 04-03-PLAN.md — Wave 3: ScoringBar (D-03) + BenchmarkHistory tabela (D-04) + ativação sidebar
 - [ ] 04-04-PLAN.md — Wave 4: Checkpoint de verificação humana do fluxo completo
 **UI hint**: yes
 
