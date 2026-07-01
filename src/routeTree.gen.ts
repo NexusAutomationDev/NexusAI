@@ -18,6 +18,7 @@ import { Route as KbIndexRouteImport } from './routes/kb/index'
 import { Route as GmailIndexRouteImport } from './routes/gmail/index'
 import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as CalendarIndexRouteImport } from './routes/calendar/index'
+import { Route as BenchmarkIndexRouteImport } from './routes/benchmark/index'
 import { Route as AgentsIndexRouteImport } from './routes/agents/index'
 import { Route as SettingsModelsRouteImport } from './routes/settings/models'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings/appearance'
@@ -68,6 +69,11 @@ const CalendarIndexRoute = CalendarIndexRouteImport.update({
   path: '/calendar/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BenchmarkIndexRoute = BenchmarkIndexRouteImport.update({
+  id: '/benchmark/',
+  path: '/benchmark/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AgentsIndexRoute = AgentsIndexRouteImport.update({
   id: '/agents/',
   path: '/agents/',
@@ -97,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/models': typeof SettingsModelsRoute
   '/agents/': typeof AgentsIndexRoute
+  '/benchmark/': typeof BenchmarkIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/chat/': typeof ChatIndexRoute
   '/gmail/': typeof GmailIndexRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/models': typeof SettingsModelsRoute
   '/agents': typeof AgentsIndexRoute
+  '/benchmark': typeof BenchmarkIndexRoute
   '/calendar': typeof CalendarIndexRoute
   '/chat': typeof ChatIndexRoute
   '/gmail': typeof GmailIndexRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/models': typeof SettingsModelsRoute
   '/agents/': typeof AgentsIndexRoute
+  '/benchmark/': typeof BenchmarkIndexRoute
   '/calendar/': typeof CalendarIndexRoute
   '/chat/': typeof ChatIndexRoute
   '/gmail/': typeof GmailIndexRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/models'
     | '/agents/'
+    | '/benchmark/'
     | '/calendar/'
     | '/chat/'
     | '/gmail/'
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/models'
     | '/agents'
+    | '/benchmark'
     | '/calendar'
     | '/chat'
     | '/gmail'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/models'
     | '/agents/'
+    | '/benchmark/'
     | '/calendar/'
     | '/chat/'
     | '/gmail/'
@@ -184,6 +196,7 @@ export interface RootRouteChildren {
   ChatRouteRoute: typeof ChatRouteRouteWithChildren
   SettingsRoute: typeof SettingsRouteWithChildren
   AgentsIndexRoute: typeof AgentsIndexRoute
+  BenchmarkIndexRoute: typeof BenchmarkIndexRoute
   CalendarIndexRoute: typeof CalendarIndexRoute
   GmailIndexRoute: typeof GmailIndexRoute
   KbIndexRoute: typeof KbIndexRoute
@@ -255,6 +268,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CalendarIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/benchmark/': {
+      id: '/benchmark/'
+      path: '/benchmark'
+      fullPath: '/benchmark/'
+      preLoaderRoute: typeof BenchmarkIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/agents/': {
       id: '/agents/'
       path: '/agents'
@@ -321,6 +341,7 @@ const rootRouteChildren: RootRouteChildren = {
   ChatRouteRoute: ChatRouteRouteWithChildren,
   SettingsRoute: SettingsRouteWithChildren,
   AgentsIndexRoute: AgentsIndexRoute,
+  BenchmarkIndexRoute: BenchmarkIndexRoute,
   CalendarIndexRoute: CalendarIndexRoute,
   GmailIndexRoute: GmailIndexRoute,
   KbIndexRoute: KbIndexRoute,
