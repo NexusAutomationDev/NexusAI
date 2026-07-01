@@ -95,3 +95,28 @@ export type KbItem = typeof kbItems.$inferSelect;
 export type NewKbItem = typeof kbItems.$inferInsert;
 export type KbChunk = typeof kbChunks.$inferSelect;
 export type NewKbChunk = typeof kbChunks.$inferInsert;
+
+// Phase 4: LLM Benchmarking tables
+export const benchmarkSessions = sqliteTable('benchmark_sessions', {
+  id: text('id').primaryKey(),
+  prompt: text('prompt').notNull(),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+  scoredAt: integer('scored_at', { mode: 'timestamp' }),
+});
+
+export const benchmarkResults = sqliteTable('benchmark_results', {
+  id: text('id').primaryKey(),
+  sessionId: text('session_id')
+    .notNull()
+    .references(() => benchmarkSessions.id, { onDelete: 'cascade' }),
+  model: text('model').notNull(),
+  response: text('response').notNull(),
+  isWinner: integer('is_winner', { mode: 'boolean' }).notNull().default(false),
+  isTie: integer('is_tie', { mode: 'boolean' }).notNull().default(false),
+  createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
+});
+
+export type BenchmarkSession = typeof benchmarkSessions.$inferSelect;
+export type NewBenchmarkSession = typeof benchmarkSessions.$inferInsert;
+export type BenchmarkResult = typeof benchmarkResults.$inferSelect;
+export type NewBenchmarkResult = typeof benchmarkResults.$inferInsert;
